@@ -18,7 +18,8 @@ import { ProfileCompletionBanner } from "./components/ProfileCompletionBanner";
 import { NextStepsGuide } from "./components/NextStepsGuide";
 import { SplashScreen } from "./components/SplashScreen";
 import { PWAInstallBanner } from "./components/PWAInstallBanner";
-import { DEFAULT_USER_PROFILE } from "./data/presets";
+import { DEFAULT_USER_PROFILE, DEFAULT_INITIAL_ROADMAP } from "./data/presets";
+import { getDemoAccountData } from "./data/demoAccountsData";
 import { apiService } from "./services/apiService";
 import { calculateOnboardingStatus } from "./utils/helpers";
 import {
@@ -59,7 +60,7 @@ export default function App() {
 
   const [roadmap, setRoadmap] = useState<LearningRoadmap | null>(() => {
     const saved = localStorage.getItem("auralearn_roadmap") || localStorage.getItem("pathforge_roadmap");
-    return saved ? JSON.parse(saved) : null;
+    return saved ? JSON.parse(saved) : DEFAULT_INITIAL_ROADMAP;
   });
 
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>(() => {
@@ -239,15 +240,16 @@ Where would you like to start?`,
       localStorage.setItem("auralearn_has_customized_profile", "true");
       setIsNewUserWelcomeOpen(false);
     } else {
-      // ── Demo / Returning Sign-In: merge auth data & load pre-filled dashboard ─────────
-      const updatedProfile: UserProfile = {
-        ...profile,
-        name: user.name || profile.name,
-        targetRole: user.roleTitle || profile.targetRole,
-        weeklyCommitmentHours: user.weeklyHours || profile.weeklyCommitmentHours,
-      };
-      setProfile(updatedProfile);
+      // ── Demo / Returning Sign-In: load persona pre-filled profile, roadmap & chat ─────────
+      const demoData = getDemoAccountData(user.name);
+      setProfile(demoData.profile);
+      setRoadmap(demoData.roadmap);
+      setChatHistory(demoData.chatHistory);
       setHasCustomizedProfile(true);
+
+      localStorage.setItem("auralearn_profile", JSON.stringify(demoData.profile));
+      localStorage.setItem("auralearn_roadmap", JSON.stringify(demoData.roadmap));
+      localStorage.setItem("auralearn_chat", JSON.stringify(demoData.chatHistory));
       localStorage.setItem("auralearn_has_customized_profile", "true");
       setIsNewUserWelcomeOpen(false);
     }

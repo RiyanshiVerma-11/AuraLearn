@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { LearningRoadmap, RoadmapStep, UserProfile, AuthUser } from "../types";
 import { calculateRoadmapStats, getNextRecommendedSteps } from "../utils/helpers";
+import { DEFAULT_INITIAL_ROADMAP } from "../data/presets";
 import { SkillGapVisualizer } from "./SkillGapVisualizer";
 import { LearningVelocityChart } from "./LearningVelocityChart";
 import { CurriculumModalityMatrix } from "./CurriculumModalityMatrix";
@@ -42,10 +43,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToChat,
   onOpenCertificate,
 }) => {
-  if (!roadmap) return null;
+  const activeRoadmap = roadmap || DEFAULT_INITIAL_ROADMAP;
 
-  const stats = calculateRoadmapStats(roadmap);
-  const nextSteps = getNextRecommendedSteps(roadmap, 3);
+  const stats = calculateRoadmapStats(activeRoadmap);
+  const nextSteps = getNextRecommendedSteps(activeRoadmap, 3);
 
   // Compute mastery level title
   let masteryLevel = "Novice Explorer";
@@ -63,7 +64,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   // Days of week schedule — dynamically derived from user's learning style and roadmap domain
   const dailyTargetHours = (profile.weeklyCommitmentHours / 5).toFixed(1);
-  const primaryDomain = profile.domainsOfInterests?.[0] || roadmap.targetRole || "Core Skills";
+  const primaryDomain = profile.domainsOfInterests?.[0] || activeRoadmap.targetRole || "Core Skills";
   const secondaryDomain = profile.domainsOfInterests?.[1] || "Applied Engineering";
   const style = profile.learningStyle || "hands-on-projects";
   const isHandsOn = style.includes("hands") || style.includes("project");
@@ -103,7 +104,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
               Tracking your verified milestone journey toward becoming an industry-ready{" "}
-              <strong className="text-slate-900 font-semibold">{roadmap.targetRole}</strong>.
+              <strong className="text-slate-900 font-semibold">{activeRoadmap.targetRole}</strong>.
             </p>
           </div>
 
@@ -252,15 +253,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Predictive Velocity Burn-up & Role Readiness Chart */}
-      <LearningVelocityChart roadmap={roadmap} profile={profile} />
+      <LearningVelocityChart roadmap={activeRoadmap} profile={profile} />
 
       {/* Two-Column Analytics Grid: Skill Gap Radar & Curriculum Modality Allocation */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-6">
-          <SkillGapVisualizer skillGaps={roadmap.skillGaps} targetRole={roadmap.targetRole} />
+          <SkillGapVisualizer skillGaps={activeRoadmap.skillGaps} targetRole={activeRoadmap.targetRole} />
         </div>
         <div className="lg:col-span-6">
-          <CurriculumModalityMatrix roadmap={roadmap} profile={profile} />
+          <CurriculumModalityMatrix roadmap={activeRoadmap} profile={profile} />
         </div>
       </div>
 
