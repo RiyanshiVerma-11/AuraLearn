@@ -14,6 +14,8 @@ services:
         value: 4000
       - key: GEMINI_API_KEY
         sync: false      # Set manually in Render dashboard
+      - key: GROQ_API_KEY
+        sync: false      # Optional backup AI engine key
       - key: APP_URL
         sync: false      # Set to your Render URL e.g. https://auralearn-backend.onrender.com
       - key: SMTP_HOST
