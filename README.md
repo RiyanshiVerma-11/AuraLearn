@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/favicon.svg" width="96" height="96" alt="AuraLearn Logo" style="border-radius: 24px;" />
+<img src="public/logo.png" width="110" height="110" alt="AuraLearn Logo" style="border-radius: 22px; shadow: 0 10px 25px rgba(0,0,0,0.3);" />
 
 # AuraLearn
 
