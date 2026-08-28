@@ -221,6 +221,10 @@ AuraLearn is built for zero downtime:
 ## 📁 Repository Structure
 
 ```
+├── docs/                # Architecture, AI specifications & persona documentation
+│   ├── AuraLearn_Solution_Documentation.md  # Formal solution architecture & AI specs
+│   ├── AGENTS.md        # System persona & engineering conventions
+│   └── GEMINI.md        # Gemini configuration & context
 ├── server/
 │   ├── routes/          # Express API route handlers (auth, roadmap, chat, deepdive, review)
 │   ├── fallbacks/       # Deterministic offline fallback generators
