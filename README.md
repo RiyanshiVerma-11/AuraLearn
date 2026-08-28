@@ -8,6 +8,12 @@
 
 *Personalized, Prerequisite-Aware Curriculum Pathways powered by Dual Gemini + Groq AI Resilience, React 19, Tailwind CSS v4, and Express Node.js.*
 
+<br/>
+
+[![Live App Demo](https://img.shields.io/badge/🚀_Live_App_Demo-aura--learn--wine.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://aura-learn-wine.vercel.app/)
+
+<br/>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
