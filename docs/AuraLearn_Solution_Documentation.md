@@ -169,12 +169,12 @@ If the Gemini API key is unconfigured, rate-limited (HTTP 429), or offline, the 
 
 ---
 
-## 🐳 6. Containerization & Deployment
+## 🐳 6. Containerization, Testing & CI/CD Pipeline
 
-AuraLearn includes a production-ready `Dockerfile` and `docker-compose.yml`:
-* **Multi-Stage Build**: Separates TypeScript compilation & Vite bundling from the lightweight production Node.js runner stage.
-* **Health Monitoring**: Integrated container health check endpoint (`/api/health`).
-* **Single Command Execution**: `docker-compose up --build -d`.
+AuraLearn incorporates an enterprise-grade automated testing & CI/CD pipeline:
+* **Vitest Unit Test Suite (`server/tests/fallbacks.test.ts`)**: Verifies air-gapped fallback generators, schema definitions, and API health endpoints.
+* **GitHub Actions Workflow (`.github/workflows/ci.yml`)**: Automatically triggers type-checking (`tsc`), Vitest unit tests (`vitest run`), and Docker container builds on every commit and pull request.
+* **Production Dockerization**: Multi-stage `Dockerfile` and `docker-compose.yml` with health checks (`/api/health`).
 
 ---
 

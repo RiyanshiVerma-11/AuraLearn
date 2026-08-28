@@ -49,6 +49,7 @@ const LANDING_NAV_LINKS = [
   { id: "archetypes", label: "Archetypes" },
   { id: "pricing", label: "Pricing" },
   { id: "faq", label: "FAQ" },
+  { id: "feedback", label: "Feedback" },
 ];
 
 export const Header: React.FC<HeaderProps> = ({
@@ -92,6 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
       "archetypes",
       "pricing",
       "faq",
+      "feedback",
     ];
 
     const elements: HTMLElement[] = [];
@@ -274,17 +276,19 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Brand logo */}
-            <div
-              onClick={() => {
-                setActiveTab("landing");
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              className="flex items-center cursor-pointer mr-2 flex-shrink-0"
-              title="AuraLearn Home"
-            >
-              <BrandLogo size="sm" showWordmark={true} badgeText="PWA" glow={true} theme="dark" />
-            </div>
+            {/* Brand logo (shown only on landing page to avoid duplication with sidebar when inside app) */}
+            {activeTab === "landing" && (
+              <div
+                onClick={() => {
+                  setActiveTab("landing");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="flex items-center cursor-pointer mr-2 flex-shrink-0"
+                title="AuraLearn Home"
+              >
+                <BrandLogo size="sm" showWordmark={true} badgeText="PWA" glow={true} theme="dark" />
+              </div>
+            )}
 
             {/* Breadcrumb Context (when in app mode) */}
             {activeTab !== "landing" && (

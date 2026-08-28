@@ -1,0 +1,19 @@
+{
+  "users": {
+    "riyanshiverma46@gmail.com": {
+      "id": "usr-1787948601802",
+      "name": "Riyanshi Verma",
+      "email": "riyanshiverma46@gmail.com",
+      "passwordHash": "7387b67a8fa21f92e736fe8e8a38a012d39c26de34a5c58a1988edda73ab84d88a0749719057f460db00f5a6f1b2141725e53e703330bf2c639e94bd9f5fbee8",
+      "roleTitle": "Generative AI & Systems Engineer",
+      "plan": "Pro Architect",
+      "weeklyHours": 10,
+      "streakDays": 0,
+      "createdAt": "2026-08-28T20:23:21.843Z",
+      "emailVerified": true
+    }
+  },
+  "sessions": {
+    "622f6281236aa7e0429e55935365e610e445844c6625c5a3dd22e4b9e04e3e93": "riyanshiverma46@gmail.com"
+  }
+}

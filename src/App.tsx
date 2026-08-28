@@ -529,25 +529,27 @@ Where would you like to start?`,
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-clip">
-        {/* Navigation Top Header */}
-        <Header
-          activeTab={activeTab}
-          setActiveTab={(tab) => {
-            setSelectedStep(null);
-            setActiveTab(tab);
-          }}
-          roadmap={roadmap}
-          profile={profile}
-          authUser={authUser}
-          selectedStep={selectedStep}
-          onClearSelectedStep={() => setSelectedStep(null)}
-          onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          onOpenAdaptModal={() => setIsAdaptModalOpen(true)}
-          onOpenExportModal={() => setIsExportModalOpen(true)}
-          onOpenNewPathModal={() => setIsPresetsModalOpen(true)}
-          onOpenAuthModal={handleOpenAuthModal}
-          onSignOut={handleSignOut}
-        />
+        {/* Navigation Top Header - Hidden while the loading splash screen is active */}
+        {!showSplash && (
+          <Header
+            activeTab={activeTab}
+            setActiveTab={(tab) => {
+              setSelectedStep(null);
+              setActiveTab(tab);
+            }}
+            roadmap={roadmap}
+            profile={profile}
+            authUser={authUser}
+            selectedStep={selectedStep}
+            onClearSelectedStep={() => setSelectedStep(null)}
+            onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            onOpenAdaptModal={() => setIsAdaptModalOpen(true)}
+            onOpenExportModal={() => setIsExportModalOpen(true)}
+            onOpenNewPathModal={() => setIsPresetsModalOpen(true)}
+            onOpenAuthModal={handleOpenAuthModal}
+            onSignOut={handleSignOut}
+          />
+        )}
 
         {/* PWA Install Notification & Offline Banner */}
         <PWAInstallBanner />
@@ -641,6 +643,7 @@ Where would you like to start?`,
               {activeTab === "roadmap" && (
                 <RoadmapGraphView
                   roadmap={roadmap}
+                  profile={profile}
                   onSelectStep={(step) => setSelectedStep(step)}
                   onToggleComplete={handleToggleStepComplete}
                   onOpenAdaptModal={() => setIsAdaptModalOpen(true)}

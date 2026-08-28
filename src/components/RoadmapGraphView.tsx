@@ -19,6 +19,7 @@ import { calculateRoadmapStats } from "../utils/helpers";
 
 interface RoadmapGraphViewProps {
   roadmap: LearningRoadmap | null;
+  profile?: any;
   onSelectStep: (step: RoadmapStep) => void;
   onToggleComplete: (stepId: string) => void;
   onOpenAdaptModal: () => void;
@@ -26,6 +27,7 @@ interface RoadmapGraphViewProps {
 
 export const RoadmapGraphView: React.FC<RoadmapGraphViewProps> = ({
   roadmap,
+  profile,
   onSelectStep,
   onToggleComplete,
   onOpenAdaptModal,
@@ -66,6 +68,29 @@ export const RoadmapGraphView: React.FC<RoadmapGraphViewProps> = ({
 
   return (
     <div className="w-full space-y-6 sm:space-y-8">
+      {/* Personalized AI Roadmap Status Banner */}
+      <div className="bg-linear-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-blue-800/60 relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-1 relative z-10">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[11px] font-mono font-bold uppercase tracking-wider border border-blue-400/30">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Personalized AI Curriculum Generated</span>
+          </div>
+          <h2 className="text-lg sm:text-xl font-extrabold tracking-tight text-white">
+            Welcome back, <span className="text-blue-300 font-black">{profile?.name || "Learner"}</span>! Your personalized roadmap is ready.
+          </h2>
+          <p className="text-xs text-slate-300 font-normal">
+            Calibrated specifically for your <strong className="text-white">{profile?.experienceLevel || roadmap.difficulty}</strong> baseline toward <strong className="text-blue-200">{roadmap.targetRole}</strong>.
+          </p>
+        </div>
+        <button
+          onClick={() => onSelectStep(currentActiveStep.id)}
+          className="relative z-10 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-98 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer flex-shrink-0"
+        >
+          <span>Continue Active Milestone</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+
       {/* Roadmap Overview Header */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">

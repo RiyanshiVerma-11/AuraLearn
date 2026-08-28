@@ -512,69 +512,85 @@ export async function execute${skill.replace(/[^a-zA-Z0-9]/g, "")}Service(payloa
             </div>
           </div>
 
-          {/* Quick Audio Narration Player Bar */}
-          <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-lg bg-blue-600/30 border border-blue-400/40 text-blue-400 flex items-center justify-center ${isSpeaking && !isSpeechPaused ? "animate-pulse" : ""}`}>
-                <Volume2 className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold flex items-center gap-2">
-                  <span>Audio & Voice Narration Engine</span>
-                  {isSpeaking && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      {isSpeechPaused ? "PAUSED" : "PLAYING"}
-                    </span>
-                  )}
+          {/* Quick Audio Narration Player Bar & Live Closed Captions */}
+          <div className="space-y-2">
+            <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-lg bg-blue-600/30 border border-blue-400/40 text-blue-400 flex items-center justify-center ${isSpeaking && !isSpeechPaused ? "animate-pulse" : ""}`}>
+                  <Volume2 className="w-5 h-5" />
                 </div>
-                <div className="text-[11px] text-slate-400">
-                  Synthesizes milestone objectives, architecture concepts, and deliverable specs into spoken audio.
+                <div>
+                  <div className="text-xs font-bold flex items-center gap-2">
+                    <span>Audio & Voice Narration Engine</span>
+                    {isSpeaking && (
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {isSpeechPaused ? "PAUSED" : "PLAYING"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Synthesizes milestone objectives, architecture concepts, and deliverable specs into spoken audio.
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Play / Pause */}
+                <button
+                  onClick={handleToggleSpeech}
+                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  {isSpeaking && !isSpeechPaused ? (
+                    <>
+                      <Pause className="w-3.5 h-3.5" />
+                      <span>Pause</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5" />
+                      <span>{isSpeechPaused ? "Resume Narration" : "Play Narration"}</span>
+                    </>
+                  )}
+                </button>
+
+                {isSpeaking && (
+                  <button
+                    onClick={handleStopSpeech}
+                    className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                  >
+                    <Square className="w-3.5 h-3.5" />
+                  </button>
+                )}
+
+                {/* Speed controls */}
+                <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+                  {[0.75, 1, 1.25, 1.5].map((rate) => (
+                    <button
+                      key={rate}
+                      onClick={() => handleRateChange(rate)}
+                      className={`px-2 py-0.5 text-[10px] font-bold rounded transition-colors cursor-pointer ${
+                        speechRate === rate ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {rate}x
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Play / Pause */}
-              <button
-                onClick={handleToggleSpeech}
-                className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
-              >
-                {isSpeaking && !isSpeechPaused ? (
-                  <>
-                    <Pause className="w-3.5 h-3.5" />
-                    <span>Pause</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3.5 h-3.5" />
-                    <span>{isSpeechPaused ? "Resume Narration" : "Play Narration"}</span>
-                  </>
-                )}
-              </button>
-
-              {isSpeaking && (
-                <button
-                  onClick={handleStopSpeech}
-                  className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors cursor-pointer"
-                >
-                  <Square className="w-3.5 h-3.5" />
-                </button>
-              )}
-
-              {/* Speed rate pills */}
-              <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700 text-[11px]">
-                {[0.75, 1, 1.25, 1.5].map((rate) => (
-                  <button
-                    key={rate}
-                    onClick={() => handleRateChange(rate)}
-                    className={`px-2 py-1 rounded font-semibold transition-colors cursor-pointer ${
-                      speechRate === rate ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    {rate}x
-                  </button>
-                ))}
+            {/* Live Subtitles / Spoken Transcript Display */}
+            <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider">
+                <span className="flex items-center gap-1 text-blue-400">
+                  <Volume2 className="w-3 h-3 text-blue-400" />
+                  Spoken Narration Transcript (Closed Captions)
+                </span>
+                <span className="text-slate-500">Live Speech Text</span>
               </div>
+              <p className="text-xs text-slate-200 leading-relaxed font-mono bg-slate-950 p-2.5 rounded-lg border border-slate-850 select-text">
+                "Milestone: {step.title}. Phase: {step.phaseName}. Estimated study commitment is {step.estimatedHours} hours. Summary: {step.shortSummary}. Key architectural objectives: {step.detailedDescription}. Target portfolio deliverable: {step.deliverable}. Verified skills acquired: {step.skillsAcquired.join(", ")}. Pedagogical recommendation: {step.aiWhyRecommended || step.reasoning || ""}."
+              </p>
             </div>
           </div>
 

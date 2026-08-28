@@ -288,6 +288,22 @@ class ApiService {
     const res = await fetch("/api/health");
     return res.json();
   }
+
+  /** Retrieves public approved feedback reviews */
+  async getFeedback(): Promise<{ success: boolean; reviews: any[] }> {
+    const res = await fetch("/api/feedback");
+    return res.json();
+  }
+
+  /** Submits learner feedback with automated moderation */
+  async submitFeedback(payload: {
+    name: string;
+    roleTitle?: string;
+    rating: number;
+    comment: string;
+  }): Promise<{ success: boolean; message: string; status: string; item?: any; error?: string }> {
+    return this.postJson("/api/feedback", payload);
+  }
 }
 
 export const apiService = new ApiService();

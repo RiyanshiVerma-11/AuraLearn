@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { getGeminiClient, executeWithGeminiFailover } from "../gemini";
+import { getGeminiClient, executeWithGeminiFailover, executeGroqCompletion, getGroqApiKey } from "../gemini";
 import { RoadmapResponseSchema } from "../schemas";
 import { generateFallbackRoadmap } from "../fallbacks/roadmapFallback";
 import { GenerateRoadmapRequest, AdaptRoadmapRequest } from "../types";
@@ -8,10 +8,9 @@ export const roadmapRouter = Router();
 
 // POST /api/generate-roadmap
 roadmapRouter.post("/generate-roadmap", async (req: Request, res: Response) => {
-  try {
-    const { profile, conversationHistory }: GenerateRoadmapRequest = req.body;
+  const { profile, conversationHistory }: GenerateRoadmapRequest = req.body;
 
-    const prompt = `You are an expert AI Learning Architect and Career Mentor.
+  const prompt = `You are an expert AI Learning Architect and Career Mentor.
 Analyze the following learner profile and generate an exhaustive, highly structured, prerequisite-aware Personalized Learning Roadmap.
 
 Learner Profile:
@@ -35,18 +34,20 @@ Requirements:
    - Specific prerequisites (referencing prior step IDs)
    - Specific skills acquired
    - Concrete hands-on deliverable / mini-project
-   - "reasoning" (MANDATORY EXPLAINABILITY FIELD): Explicitly state why the AI recommended this milestone referencing the user's specific Skill Gap Vector and Learner Profile (e.g. "Recommended because your baseline in Vector Databases is at 20% while your target role demands 85%; mastering embeddings here provides the critical foundation before building multi-source RAG architectures in Phase 2").
+   - "reasoning" (MANDATORY EXPLAINABILITY FIELD): Explicitly state why the AI recommended this milestone referencing the user's specific Skill Gap Vector and Learner Profile.
    - "aiWhyRecommended": Clear summary of immediate engineering impact.
-   - 2-3 real, high-quality curated learning resources (e.g. Stanford Online, Coursera, DeepLearning.AI, Harvard CS50, Fast.ai, MIT OCW, freeCodeCamp, official docs, YouTube tutorials) with real providers, estimated duration, difficulty, cost type, and a personalized "Why Recommended" explanation linking directly to their profile.
-   - A short 3-question milestone check assessment (multiple choice questions with explanations).
+   - 2-3 real, high-quality curated learning resources with real providers, estimated duration, difficulty, cost type, and a personalized "Why Recommended" explanation linking directly to their profile.
+   - A short 3-question milestone check assessment.
    - 2-3 actionable learning tips / study strategies.
 3. Include an accurate Skill Gap Analysis comparing current proficiency (0-100) vs target proficiency (0-100) with gap severity (critical, moderate, minor, mastered).
 
 Return strictly JSON matching this structure.`;
 
+  // 1. Try Primary Engine: Google Gemini 2.5 Flash
+  try {
     const response = await executeWithGeminiFailover(async (ai) => {
       return await ai.models.generateContent({
-        model: "gemini-3.7-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -65,18 +66,46 @@ Return strictly JSON matching this structure.`;
     }
     parsed.createdAt = new Date().toISOString();
 
-    res.json({
+    return res.json({
       success: true,
+      provider: "gemini-2.5-flash",
       roadmap: parsed,
     });
-  } catch (error: any) {
-    console.error("Roadmap generation error (using fallback):", error);
-    const { profile } = req.body;
-    res.json({
+  } catch (geminiErr: any) {
+    console.warn("[AIRoadmap] Gemini primary engine unavailable, attempting Groq API failover...", geminiErr.message);
+
+    // 2. Try Secondary Failover Engine: Groq API (openai/gpt-oss-120b)
+    if (getGroqApiKey()) {
+      try {
+        const rawJson = await executeGroqCompletion(prompt, true);
+        const parsed = JSON.parse(rawJson.trim());
+        if (parsed.steps && parsed.steps.length > 0) {
+          parsed.steps = parsed.steps.map((step: any, idx: number) => ({
+            ...step,
+            status: idx === 0 ? "in_progress" : idx === 1 ? "up_next" : "locked",
+            userNotes: "",
+          }));
+        }
+        parsed.createdAt = new Date().toISOString();
+
+        console.log("[AIRoadmap] Successfully generated roadmap using Groq API (gpt-oss-120b)!");
+        return res.json({
+          success: true,
+          provider: "groq-gpt-oss-120b",
+          roadmap: parsed,
+        });
+      } catch (groqErr: any) {
+        console.warn("[AIRoadmap] Groq failover engine also failed:", groqErr.message);
+      }
+    }
+
+    // 3. Resilient Local Dynamic Engine Fallback
+    return res.json({
       success: true,
       isFallback: true,
+      provider: "local-resilient-fallback",
       roadmap: generateFallbackRoadmap(profile),
-      errorMessage: error.message,
+      errorMessage: geminiErr.message,
     });
   }
 });
@@ -107,7 +136,7 @@ Return the fully updated JSON object strictly matching the learning roadmap sche
 
     const response = await executeWithGeminiFailover(async (ai) => {
       return await ai.models.generateContent({
-        model: "gemini-3.7-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",

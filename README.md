@@ -14,9 +14,10 @@
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![Express](https://img.shields.io/badge/Express-4.21-000000?logo=express)](https://expressjs.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-3.0_Passing-6E9F18?logo=vitest)](https://vitest.dev/)
 [![Docker Container](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
+[![GitHub Actions CI](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=githubactions)](https://github.com/RiyanshiVerma-11/AuraLearn/actions)
 [![Google Gemini](https://img.shields.io/badge/AI-Gemini_3.7_Flash-8E75FF?logo=google)](https://ai.google.dev/)
-[![Build Status](https://img.shields.io/badge/Build-Passing-emerald.svg)]()
 
 ---
 

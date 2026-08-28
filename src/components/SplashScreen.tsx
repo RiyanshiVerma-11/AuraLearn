@@ -64,7 +64,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0, scale: 1.05 }}
         transition={{ duration: 0.4 }}
-        className="fixed inset-0 z-50 flex flex-col items-center justify-between p-6 sm:p-10 bg-white text-slate-900 overflow-hidden select-none"
+        className="fixed inset-0 z-[9999] flex flex-col items-center justify-between p-6 sm:p-10 bg-white text-slate-900 overflow-hidden select-none"
       >
         {/* Background Glowing Subtle Gradients */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
