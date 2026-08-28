@@ -235,9 +235,11 @@ Where would you like to start?`,
         },
       ]);
 
-      setIsNewUserWelcomeOpen(true);
+      setHasCustomizedProfile(true);
+      localStorage.setItem("auralearn_has_customized_profile", "true");
+      setIsNewUserWelcomeOpen(false);
     } else {
-      // ── Returning Sign-In: merge auth data into existing profile ─────────
+      // ── Demo / Returning Sign-In: merge auth data & load pre-filled dashboard ─────────
       const updatedProfile: UserProfile = {
         ...profile,
         name: user.name || profile.name,
@@ -245,10 +247,9 @@ Where would you like to start?`,
         weeklyCommitmentHours: user.weeklyHours || profile.weeklyCommitmentHours,
       };
       setProfile(updatedProfile);
-
-      if (!hasCustomizedProfile) {
-        setIsNewUserWelcomeOpen(true);
-      }
+      setHasCustomizedProfile(true);
+      localStorage.setItem("auralearn_has_customized_profile", "true");
+      setIsNewUserWelcomeOpen(false);
     }
   };
 
