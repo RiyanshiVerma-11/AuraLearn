@@ -4,20 +4,20 @@
 
 # AuraLearn
 
-### **Autonomous AI Learning Architect & Skill Gap Optimization Engine**
+### **Autonomous AI Learning Architect, Skill Gap Engine & PWA**
 
-*Personalized, Prerequisite-Aware Curriculum Pathways powered by Gemini 3.7 Flash, React 18 / 19, and Express Node.js.*
+*Personalized, Prerequisite-Aware Curriculum Pathways powered by Dual Gemini + Groq AI Resilience, React 19, Tailwind CSS v4, and Express Node.js.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18/19-61DAFB?logo=react)](https://react.dev/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![Express](https://img.shields.io/badge/Express-4.21-000000?logo=express)](https://expressjs.com/)
-[![Vitest](https://img.shields.io/badge/Vitest-3.0_Passing-6E9F18?logo=vitest)](https://vitest.dev/)
+[![PWA Ready](https://img.shields.io/badge/PWA-Installable-5A0FC8?logo=pwa)](https://web.dev/progressive-web-apps/)
 [![Docker Container](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
 [![GitHub Actions CI](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=githubactions)](https://github.com/RiyanshiVerma-11/AuraLearn/actions)
-[![Google Gemini](https://img.shields.io/badge/AI-Gemini_3.7_Flash-8E75FF?logo=google)](https://ai.google.dev/)
+[![Dual AI Engine](https://img.shields.io/badge/AI-Gemini%20%2B%20Groq-8E75FF?logo=google)](https://ai.google.dev/)
 
 ---
 
@@ -51,15 +51,21 @@ Standard online learning recommendation platforms recommend isolated videos or g
 - **Learning Velocity & Role Readiness (`LearningVelocityChart`)**: Dynamic completion forecast burn-up curves reacting in real-time to weekly hour adjustments.
 - **Curriculum Modality Matrix (`CurriculumModalityMatrix`)**: Visual allocation across hands-on labs, video courses, RFCs/theory, and case studies.
 
-### 💬 4. Conversational AI Learning Advisor
-- Contextual side-panel AI mentor for real-time path calibration.
-- Learner can ask queries or adjust preferences in natural language (e.g., *"Focus more on LLM evaluation frameworks and reduce my weekly load"*).
+### 💬 4. Conversational AI Learning Advisor (Aura)
+- Contextual side-panel AI mentor for real-time path calibration powered by full GFM markdown rendering (`react-markdown` + `remark-gfm`).
+- Rich, beautifully formatted responses with category badges, structured bullet lists, code syntax blocks, and styled external link cards.
+- Full context injection: Aura retains your exact profile, active roadmap, skill gap vector, and chat history across turns.
+- Interactive quick-action buttons allowing learners to instantly adapt timelines, view free resources, or trigger capstone project builds.
 
-### 📝 5. Milestone Assessments & Code Review Evaluator
+### 📱 5. Progressive Web App (PWA) Support
+- Fully installable PWA with custom service worker, offline web manifest, and iOS/Android home screen support.
+- Offline caching fallback ensures user profile, active roadmaps, and learning progress remain available without internet connectivity.
+
+### 📝 6. Milestone Assessments & Code Review Evaluator
 - Embedded 3-question diagnostic check quizzes with immediate explanation feedback per step.
 - **AI Code Review Evaluator (`reviewRoutes.ts`)**: Automated rubric grading for code submissions (Functionality, Architecture, Cleanliness, Security).
 
-### 📅 6. Multi-Format Export & Sync
+### 📅 7. Multi-Format Export & Sync
 - One-click `.ics` Calendar Export for Google Calendar, Apple Calendar, and Outlook.
 - Instant export to raw Markdown, structured JSON, or printable document formats.
 
@@ -69,7 +75,7 @@ Standard online learning recommendation platforms recommend isolated videos or g
 
 ```
                                   +---------------------------------------+
-                                  |         React 18 / 19 Client          |
+                                  |         React 19 Client (PWA)         |
                                   |  (Vite + Tailwind CSS v4 + Recharts)  |
                                   +-------------------+-------------------+
                                                       |
@@ -80,14 +86,14 @@ Standard online learning recommendation platforms recommend isolated videos or g
                                   |  (Bundled via esbuild to server.cjs)  |
                                   +-------------------+-------------------+
                                                       |
-                                   +------------------+------------------+
-                                   |                                     |
-                                   v                                     v
-                 +-----------------------------------+ +-----------------------------------+
-                 |        Gemini AI Engine           | |     Air-Gapped Resilient Engine   |
-                 |    (@google/genai 3.7 Flash)      | |     Offline Fallback Generators   |
-                 | Server-Side Schema Enforcer       | |     (Deterministic Fallbacks)     |
-                 +-----------------------------------+ +-----------------------------------+
+                   +----------------------------------+----------------------------------+
+                   |                                  |                                  |
+                   v                                  v                                  v
+ +-----------------------------------+ +-----------------------------------+ +-----------------------------------+
+ |     Primary AI Engine (Gemini)    | |    Failover AI Engine (Groq)    | |    Air-Gapped Resilient Engine    |
+ |      (gemini-2.5-flash)           | |       (openai/gpt-oss-120b)       | |     Local Deterministic Engine    |
+ |  Server Schema Enforcement        | |  Full Profile & Roadmap Context | |    (Zero Downtime Offline Mode) |
+ +-----------------------------------+ +-----------------------------------+ +-----------------------------------+
 ```
 
 ---
