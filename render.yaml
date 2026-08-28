@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: auralearn-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: GEMINI_API_KEY
+        sync: false      # Set manually in Render dashboard
+      - key: APP_URL
+        sync: false      # Set to your Render URL e.g. https://auralearn-backend.onrender.com
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false

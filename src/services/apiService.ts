@@ -123,6 +123,11 @@ export const authToken = {
 // ─────────────────────────────────────────────
 // API Service
 // ─────────────────────────────────────────────
+
+// In production (Vercel), VITE_API_URL points to the Render backend.
+// In development, it's empty so relative paths work via Vite's proxy.
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? "";
+
 class ApiService {
   private getAuthHeaders(): Record<string, string> {
     const token = authToken.get();
@@ -131,7 +136,7 @@ class ApiService {
 
   private async postJson<T>(endpoint: string, payload: any, withAuth = false): Promise<T> {
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -195,7 +200,7 @@ class ApiService {
     const token = authToken.get();
     if (!token) return { success: false, error: "No session token" };
     try {
-      const res = await fetch("/api/auth/me", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
       return await res.json();
@@ -208,7 +213,7 @@ class ApiService {
   async logout(): Promise<void> {
     const token = authToken.get();
     if (token) {
-      await fetch("/api/auth/logout", {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }).catch(() => {});
@@ -285,13 +290,13 @@ class ApiService {
 
   /** Performs server health check */
   async checkHealth(): Promise<{ status: string }> {
-    const res = await fetch("/api/health");
+    const res = await fetch(`${API_BASE_URL}/api/health`);
     return res.json();
   }
 
   /** Retrieves public approved feedback reviews */
   async getFeedback(): Promise<{ success: boolean; reviews: any[] }> {
-    const res = await fetch("/api/feedback");
+    const res = await fetch(`${API_BASE_URL}/api/feedback`);
     return res.json();
   }
 
