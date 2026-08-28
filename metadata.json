@@ -1,0 +1,6 @@
+{
+  "name": "AI-Powered Personalized Learning Path Recommender",
+  "description": "An intelligent learning assistant that analyzes profiles, discovers goals, identifies skill gaps, and generates adaptive personalized learning roadmaps with prerequisites, milestones, course recommendations, and progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

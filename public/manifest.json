@@ -1,0 +1,36 @@
+{
+  "name": "AuraLearn - Autonomous AI Learning Architect",
+  "short_name": "AuraLearn",
+  "description": "AI-powered personalized learning roadmaps, diagnostic skill radar, adaptive milestones, and curated resources.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity", "career"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My Roadmap",
+      "url": "/?tab=roadmap",
+      "description": "Open active learning path and deliverables"
+    },
+    {
+      "name": "Skill Radar",
+      "url": "/?tab=dashboard",
+      "description": "Inspect diagnostic proficiency and gaps"
+    },
+    {
+      "name": "AI Advisor (Aura)",
+      "url": "/?tab=chat",
+      "description": "Chat with Aura AI career architect"
+    }
+  ]
+}

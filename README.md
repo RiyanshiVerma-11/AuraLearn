@@ -1,0 +1,251 @@
+<div align="center">
+
+# 🔮 AuraLearn
+
+### **Autonomous AI Learning Architect & Skill Gap Optimization Engine**
+
+*Personalized, Prerequisite-Aware Curriculum Pathways powered by Gemini 3.7 Flash, React 18 / 19, and Express Node.js.*
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18/19-61DAFB?logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+[![Express](https://img.shields.io/badge/Express-4.21-000000?logo=express)](https://expressjs.com/)
+[![Docker Container](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
+[![Google Gemini](https://img.shields.io/badge/AI-Gemini_3.7_Flash-8E75FF?logo=google)](https://ai.google.dev/)
+[![Build Status](https://img.shields.io/badge/Build-Passing-emerald.svg)]()
+
+---
+
+[Features](#-key-features) • [Architecture](#-system-architecture) • [Local Setup](#-step-by-step-local-setup) • [Docker Setup](#-docker-container-setup) • [API Specs](#-api-endpoints-reference) • [Offline Resilience](#-air-gapped-resilience) • [License](#-license)
+
+</div>
+
+---
+
+## 📖 Overview
+
+Standard online learning recommendation platforms recommend isolated videos or generic playlists without understanding **prerequisites**, **skill gap vectors**, or **learner weekly availability**. 
+
+**AuraLearn** is an enterprise-grade AI learning architect platform. It acts as an autonomous Principal AI Learning Architect—analyzing a learner's background, target role, baseline vs target skills, weekly commitment hours, and preferred learning modalities to build **explainable, milestone-driven Directed Acyclic Graph (DAG) learning roadmaps**.
+
+---
+
+## ✨ Key Features
+
+### 🗺️ 1. Prerequisite-Aware DAG Roadmap Generator
+- Generates 3–5 logical sequential phases (Foundational Bridge $\rightarrow$ Core Systems $\rightarrow$ Applied Capstones $\rightarrow$ Mastery).
+- Explicit prerequisite binding between milestone steps to eliminate sequencing confusion.
+- Assigns actionable hands-on deliverables, skills acquired, and estimated hours per step.
+
+### 🧠 2. Transparent AI Explainability Engine
+- Every milestone step and recommended resource includes explicit AI rationale (`reasoning` & `aiWhyRecommended`).
+- Explains *why* a topic was included by referencing the user's specific skill gap delta vector (e.g., *"Recommended because your baseline in Vector DBs is at 20% while your target role demands 85%"*).
+
+### 📊 3. Executive Telemetry & Radar Analytics
+- **Skill Gap Radar (`SkillGapVisualizer`)**: Quantitative 0–100 comparison between current capabilities vs target role requirements.
+- **Learning Velocity & Role Readiness (`LearningVelocityChart`)**: Dynamic completion forecast burn-up curves reacting in real-time to weekly hour adjustments.
+- **Curriculum Modality Matrix (`CurriculumModalityMatrix`)**: Visual allocation across hands-on labs, video courses, RFCs/theory, and case studies.
+
+### 💬 4. Conversational AI Learning Advisor
+- Contextual side-panel AI mentor for real-time path calibration.
+- Learner can ask queries or adjust preferences in natural language (e.g., *"Focus more on LLM evaluation frameworks and reduce my weekly load"*).
+
+### 📝 5. Milestone Assessments & Code Review Evaluator
+- Embedded 3-question diagnostic check quizzes with immediate explanation feedback per step.
+- **AI Code Review Evaluator (`reviewRoutes.ts`)**: Automated rubric grading for code submissions (Functionality, Architecture, Cleanliness, Security).
+
+### 📅 6. Multi-Format Export & Sync
+- One-click `.ics` Calendar Export for Google Calendar, Apple Calendar, and Outlook.
+- Instant export to raw Markdown, structured JSON, or printable document formats.
+
+---
+
+## 🏛️ System Architecture
+
+```
+                                  +---------------------------------------+
+                                  |         React 18 / 19 Client          |
+                                  |  (Vite + Tailwind CSS v4 + Recharts)  |
+                                  +-------------------+-------------------+
+                                                      |
+                                                      |  HTTP / REST API (JSON)
+                                                      v
+                                  +---------------------------------------+
+                                  |        Express Node.js Server         |
+                                  |  (Bundled via esbuild to server.cjs)  |
+                                  +-------------------+-------------------+
+                                                      |
+                                   +------------------+------------------+
+                                   |                                     |
+                                   v                                     v
+                 +-----------------------------------+ +-----------------------------------+
+                 |        Gemini AI Engine           | |     Air-Gapped Resilient Engine   |
+                 |    (@google/genai 3.7 Flash)      | |     Offline Fallback Generators   |
+                 | Server-Side Schema Enforcer       | |     (Deterministic Fallbacks)     |
+                 +-----------------------------------+ +-----------------------------------+
+```
+
+---
+
+## ⚡ Step-by-Step Local Setup
+
+### Prerequisites
+
+- **Node.js**: `v18.0.0` or higher (`node -v`)
+- **npm**: `v9.0.0` or higher (`npm -v`)
+
+### Step 1: Clone Repository & Install Dependencies
+
+```bash
+git clone https://github.com/RiyanshiVerma-11/AuraLearn.git
+cd AuraLearn
+npm install
+```
+
+### Step 2: Configure Environment Variables
+
+Create a `.env` file in the project root directory (or use default configuration):
+
+```env
+PORT=4000
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Optional: SMTP Email Configuration for Auth OTP Delivery
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+SMTP_FROM=AuraLearn <your_email@gmail.com>
+```
+
+> **Note**: If `GEMINI_API_KEY` is omitted or invalid, AuraLearn automatically activates its **Air-Gapped Resilient Fallback Engine**, ensuring the platform remains 100% operational offline.
+
+### Step 3: Run Development Server
+
+```bash
+npm run dev
+```
+
+Open your browser and navigate to **`http://localhost:4000`**.
+
+### Step 4: Verify System Health
+
+You can verify the backend status by calling:
+```bash
+curl http://localhost:4000/api/health
+```
+
+---
+
+## 🐳 Docker Container Setup
+
+AuraLearn is fully containerized with a production multi-stage Docker build.
+
+### Option A: Using Docker Compose (Recommended)
+
+To launch the complete application with Docker Compose:
+
+```bash
+# Build and start container in detached mode
+docker-compose up --build -d
+```
+
+Access the application at **`http://localhost:4000`**.
+
+To view logs:
+```bash
+docker-compose logs -f
+```
+
+To stop the container:
+```bash
+docker-compose down
+```
+
+### Option B: Using Standalone Docker Commands
+
+```bash
+# 1. Build Docker Image
+docker build -t auralearn:latest .
+
+# 2. Run Container
+docker run -d -p 4000:4000 --name auralearn_app --env-file .env auralearn:latest
+```
+
+---
+
+## 🚀 Production Build (Without Docker)
+
+```bash
+# 1. Typecheck & Validate
+npx tsc --noEmit
+
+# 2. Build Production Bundle (Vite Frontend + Express Server)
+npm run build
+
+# 3. Start Production Server
+npm run start
+```
+
+---
+
+## 🔌 API Endpoints Reference
+
+All API routes are hosted under the `/api` namespace:
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user and issue an email/dev OTP. |
+| `POST` | `/api/auth/verify-otp` | Verify OTP code and activate account. |
+| `POST` | `/api/auth/login` | Authenticate user via password or magic link. |
+| `GET`  | `/api/auth/me` | Retrieve authenticated user session details. |
+| `POST` | `/api/generate-roadmap` | Accepts user profile JSON and generates a full DAG roadmap with skill gaps and quizzes. |
+| `POST` | `/api/adapt-roadmap` | Re-optimizes an existing roadmap based on natural language feedback. |
+| `POST` | `/api/chat-advisor` | Contextual conversational agent returning messages & profile updates. |
+| `POST` | `/api/generate-step-deepdive` | Generates deep-dive lesson syllabi, code snippets, and takeaways for a step. |
+| `POST` | `/api/review-deliverable` | Evaluates submitted code against a multi-point quality rubric. |
+| `GET`  | `/api/health` | Health check endpoint returning system & AI status. |
+
+---
+
+## 🛡️ Air-Gapped Resilience & Fallback Mode
+
+AuraLearn is built for zero downtime:
+- **Zero Crash Guarantee**: If network connectivity drops or the AI API quota is exceeded, the server seamlessly degrades to deterministic local fallback generators (`server/fallbacks/*`).
+- **Schema Validation**: All Gemini responses are parsed and validated against rigid JSON Schemas (`server/schemas.ts`) to prevent malformed data structures.
+
+---
+
+## 📁 Repository Structure
+
+```
+├── server/
+│   ├── routes/          # Express API route handlers (auth, roadmap, chat, deepdive, review)
+│   ├── fallbacks/       # Deterministic offline fallback generators
+│   ├── data/            # Persistent JSON file storage (store.json)
+│   ├── app.ts           # Express application initialization with CORS
+│   ├── gemini.ts        # Lazy Gemini AI client & failover execution engine
+│   └── schemas.ts       # Single-source JSON Schemas for Gemini outputs
+├── src/
+│   ├── components/      # React UI component library (24+ modular components)
+│   ├── services/        # Frontend REST API client (`apiService.ts`)
+│   ├── utils/           # Calendar export (.ics), statistics & helper utilities
+│   ├── data/            # Career presets & sample profile templates
+│   ├── types.ts         # Central TypeScript interfaces & domain types
+│   ├── App.tsx          # Root application container & view manager
+│   └── index.css        # Tailwind CSS v4 styling & tokens
+├── Dockerfile           # Multi-stage production container manifest
+├── docker-compose.yml   # Container orchestration manifest
+├── server.ts            # Main Node.js server entry point (Vite dev middleware / static dist)
+├── package.json         # Project dependencies & scripts
+├── tsconfig.json        # TypeScript compiler configuration
+└── vite.config.ts       # Vite build configuration
+```
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
