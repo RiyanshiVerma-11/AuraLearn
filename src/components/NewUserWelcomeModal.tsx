@@ -41,7 +41,7 @@ export const NewUserWelcomeModal: React.FC<NewUserWelcomeModalProps> = ({
   );
   const [weeklyHours, setWeeklyHours] = useState<number>(profile.weeklyCommitmentHours || 10);
   const [learningStyle, setLearningStyle] = useState<LearningStyle>(
-    profile.learningStyle || "Hands-on Projects"
+    profile.learningStyle || "hands-on-projects"
   );
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -282,10 +282,10 @@ export const NewUserWelcomeModal: React.FC<NewUserWelcomeModalProps> = ({
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  { id: "Hands-on Projects", label: "Hands-on Code" },
-                  { id: "Interactive & Visual", label: "Visual & Labs" },
-                  { id: "Theory & RFC Deep-Dives", label: "Theory / RFCs" },
-                  { id: "Diagnostic & Assessment-Driven", label: "Diagnostics" },
+                  { id: "hands-on-projects", label: "Hands-on Code" },
+                  { id: "interactive-code", label: "Visual & Labs" },
+                  { id: "academic-papers", label: "Theory / RFCs" },
+                  { id: "case-studies", label: "Diagnostics" },
                 ].map((mod) => (
                   <button
                     key={mod.id}

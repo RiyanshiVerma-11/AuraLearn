@@ -51,17 +51,15 @@ export const CurriculumModalityMatrix: React.FC<CurriculumModalityMatrixProps> =
     let totalResourcesCount = 0;
 
     roadmap.steps.forEach((step) => {
-      deliverablesCount += step.deliverables?.length || 1;
-      if (step.starterBlueprint || step.syllabusItems?.length) {
-        codeBlueprintsCount += (step.syllabusItems?.length || 2);
-      }
-      if (step.curatedResources?.length) {
-        officialDocsCount += step.curatedResources.filter(
-          (r) => r.type === "doc" || r.type === "book"
+      deliverablesCount += step.deliverable ? 1 : 1;
+      codeBlueprintsCount += 2;
+      if (step.resources?.length) {
+        officialDocsCount += step.resources.filter(
+          (r) => r.type === "article" || r.type === "book" || r.type === "interactive"
         ).length;
-        totalResourcesCount += step.curatedResources.length;
+        totalResourcesCount += step.resources.length;
       }
-      quizCount += step.diagnosticQuiz?.questions?.length || 3;
+      quizCount += step.assessment?.questions?.length || 3;
     });
 
     const totalActivities =
@@ -106,9 +104,9 @@ export const CurriculumModalityMatrix: React.FC<CurriculumModalityMatrixProps> =
     let learningStyleFit = "Balanced Multi-Modal Structure";
     if (profile.learningStyle === "hands-on-projects") {
       learningStyleFit = "Heavy Hands-on Bias (>40% Deliverables & Code Blueprints)";
-    } else if (profile.learningStyle === "theory-first") {
+    } else if (profile.learningStyle === "academic-papers") {
       learningStyleFit = "Academic & Specification Heavy (Deep RFC & Theory Focus)";
-    } else if (profile.learningStyle === "interactive") {
+    } else if (profile.learningStyle === "interactive-code") {
       learningStyleFit = "Rapid Iteration & Diagnostic Feedback Loop";
     }
 

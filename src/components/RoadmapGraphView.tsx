@@ -83,7 +83,7 @@ export const RoadmapGraphView: React.FC<RoadmapGraphViewProps> = ({
           </p>
         </div>
         <button
-          onClick={() => onSelectStep(currentActiveStep.id)}
+          onClick={() => onSelectStep(currentActiveStep)}
           className="relative z-10 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-98 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer flex-shrink-0"
         >
           <span>Continue Active Milestone</span>

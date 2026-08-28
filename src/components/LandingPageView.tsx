@@ -61,7 +61,7 @@ import { BrandLogo } from "./BrandLogo";
 interface LandingPageViewProps {
   onGetStarted: () => void;
   onSelectPreset: (preset: CareerPathPreset) => void;
-  onNavigateToTab: (tab: "roadmap" | "dashboard" | "profile" | "chat" | "resources") => void;
+  onNavigateToTab: (tab: "landing" | "roadmap" | "dashboard" | "profile" | "chat" | "resources") => void;
   roadmap: LearningRoadmap | null;
   onOpenAuth?: (mode?: "signin" | "signup") => void;
   authUser?: AuthUser | null;
