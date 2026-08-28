@@ -199,7 +199,7 @@ async function sendOTPEmail(email: string, otp: string, purpose: string): Promis
           <tr>
             <td style="background:linear-gradient(135deg,#1e40af,#3b82f6);padding:32px 40px;text-align:center;">
               <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:12px;padding:8px 16px;margin-bottom:12px;">
-                <span style="color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">🔮 AuraLearn</span>
+                <span style="color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">AuraLearn AI</span>
               </div>
               <h1 style="margin:0;color:#ffffff;font-size:18px;font-weight:700;">${purposeLabel}</h1>
               <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">Your secure one-time verification code</p>

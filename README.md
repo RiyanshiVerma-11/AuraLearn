@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🔮 AuraLearn
+<img src="public/favicon.svg" width="96" height="96" alt="AuraLearn Logo" style="border-radius: 24px;" />
+
+# AuraLearn
 
 ### **Autonomous AI Learning Architect & Skill Gap Optimization Engine**
 
