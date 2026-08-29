@@ -110,18 +110,303 @@ export const MilestoneLearningView: React.FC<MilestoneLearningViewProps> = ({
     };
   }, []);
 
-  // Sync state when step changes
-  useEffect(() => {
-    setNotes(step.userNotes || "");
-    setSelectedAnswers({});
-    setQuizSubmitted(false);
-    setCopiedIndex(null);
-    setReviewData(null);
-    setSubmissionNotes("");
+  // Helper to generate starter boilerplate code based on selected programming language
+  const generateStarterCode = (lang: string, currentStep: RoadmapStep): string => {
+    const rawSkill = currentStep.skillsAcquired[0] || "Milestone";
+    const cleanSkill = rawSkill.replace(/[^a-zA-Z0-9]/g, "");
+    const serviceName = (cleanSkill || "Milestone") + "Service";
+    const tableName = "milestone_" + (currentStep.id || "001").replace(/[^a-zA-Z0-9]/g, "_") + "_logs";
+    const skillsList = currentStep.skillsAcquired.join(", ");
+
+    switch (lang) {
+      case "Python":
+        return `# Milestone Implementation: ${currentStep.deliverable}
+# Target Skills: ${skillsList}
+
+import time
+from typing import Dict, Any, Optional
+
+class ${serviceName}:
+    """
+    Implementation for: ${currentStep.title}
+    Deliverable: ${currentStep.deliverable}
+    """
+    def __init__(self, milestone_id: str = "${currentStep.id}", enable_telemetry: bool = True):
+        self.milestone_id = milestone_id
+        self.enable_telemetry = enable_telemetry
+        self.is_initialized = False
+
+    def initialize(self) -> None:
+        """Setup connections, schemas, or memory buffers."""
+        self.is_initialized = True
+        print(f"[${serviceName}] Initialized successfully for milestone {self.milestone_id}.")
+
+    def execute_pipeline(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute core deliverable pipeline logic."""
+        if not self.is_initialized:
+            raise RuntimeError("Service not initialized. Call initialize() first.")
+        
+        # =========================================================
+        # WRITE YOUR CODE HERE...
+        # Implement your core milestone deliverable logic below:
+        # =========================================================
+        
+        processed_result = {
+            "status": "completed",
+            "input_received": payload,
+            "deliverable_spec": "${currentStep.deliverable.replace(/"/g, '\\"')}"
+        }
+
+        return {
+            "success": True,
+            "milestone_id": self.milestone_id,
+            "processed_at": time.time(),
+            "result": processed_result
+        }
+
+if __name__ == "__main__":
+    service = ${serviceName}()
+    service.initialize()
+    output = service.execute_pipeline({"test_mode": True})
+    print("Pipeline Execution Result:", output)
+`;
+
+      case "JavaScript":
+        return `// Milestone Implementation: ${currentStep.deliverable}
+// Target Skills: ${skillsList}
+
+class ${serviceName} {
+  constructor(config = {}) {
+    this.milestoneId = config.milestoneId || "${currentStep.id}";
+    this.enableTelemetry = config.enableTelemetry ?? true;
+    this.isInitialized = false;
+  }
+
+  async initialize() {
+    // Setup connections, schemas, or memory buffers
+    this.isInitialized = true;
+    console.log(\`[\${this.constructor.name}] Initialized successfully for milestone \${this.milestoneId}.\`);
+  }
+
+  async executePipeline(payload = {}) {
+    if (!this.isInitialized) {
+      throw new Error("Service not initialized. Call initialize() first.");
+    }
     
-    // Generate default boilerplate code for this step's deliverable
-    const starter = `// Milestone Implementation: ${step.deliverable}
-// Target Skills: ${step.skillsAcquired.join(", ")}
+    // =========================================================
+    // WRITE YOUR CODE HERE...
+    // Implement your core milestone deliverable logic below:
+    // =========================================================
+
+    const processedResult = {
+      status: "completed",
+      inputReceived: payload,
+      deliverableSpec: "${currentStep.deliverable.replace(/"/g, '\\"')}"
+    };
+
+    return {
+      success: true,
+      milestoneId: this.milestoneId,
+      result: processedResult,
+      processedAt: Date.now()
+    };
+  }
+}
+
+module.exports = { ${serviceName} };
+`;
+
+      case "SQL":
+        return `-- Milestone Implementation: ${currentStep.deliverable}
+-- Target Skills: ${skillsList}
+
+-- 1. Schema setup & Table creation
+CREATE TABLE IF NOT EXISTS ${tableName} (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type VARCHAR(100) NOT NULL,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =========================================================
+-- WRITE YOUR CODE HERE...
+-- Implement your core SQL queries & analytical logic below:
+-- =========================================================
+
+WITH aggregated_metrics AS (
+  SELECT 
+    event_type,
+    COUNT(*) AS total_events,
+    MAX(created_at) AS last_seen
+  FROM ${tableName}
+  WHERE created_at >= NOW() - INTERVAL '7 days'
+  GROUP BY event_type
+)
+SELECT 
+  event_type,
+  total_events,
+  last_seen,
+  ROUND(total_events * 100.0 / NULLIF(SUM(total_events) OVER (), 0), 2) AS percentage
+FROM aggregated_metrics
+ORDER BY total_events DESC;
+`;
+
+      case "Rust":
+        return `// Milestone Implementation: ${currentStep.deliverable}
+// Target Skills: ${skillsList}
+
+use std::collections::HashMap;
+
+pub struct ${serviceName}Config {
+    pub milestone_id: String,
+    pub enable_telemetry: bool,
+    pub timeout_ms: u64,
+}
+
+pub struct ${serviceName} {
+    config: ${serviceName}Config,
+    is_initialized: bool,
+}
+
+impl ${serviceName} {
+    pub fn new(config: ${serviceName}Config) -> Self {
+        Self {
+            config,
+            is_initialized: false,
+        }
+    }
+
+    pub fn initialize(&mut self) -> Result<(), String> {
+        // Setup state & buffers
+        self.is_initialized = true;
+        println!("[${serviceName}] Initialized successfully for milestone {}", self.config.milestone_id);
+        Ok(())
+    }
+
+    pub fn execute_pipeline(&self, payload: &HashMap<String, String>) -> Result<String, String> {
+        if !self.is_initialized {
+            return Err("Service not initialized. Call initialize() first.".to_string());
+        }
+        
+        // =========================================================
+        // WRITE YOUR CODE HERE...
+        // Implement your core milestone deliverable logic below:
+        // =========================================================
+
+        Ok(format!("Execution completed successfully for payload keys: {}", payload.len()))
+    }
+}
+
+fn main() {
+    let config = ${serviceName}Config {
+        milestone_id: "${currentStep.id}".to_string(),
+        enable_telemetry: true,
+        timeout_ms: 5000,
+    };
+    let mut service = ${serviceName}::new(config);
+    let _ = service.initialize();
+}
+`;
+
+      case "Go":
+        return `// Milestone Implementation: ${currentStep.deliverable}
+// Target Skills: ${skillsList}
+
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type ${serviceName}Config struct {
+	MilestoneID     string
+	EnableTelemetry bool
+	TimeoutMS       int
+}
+
+type ${serviceName} struct {
+	config        ${serviceName}Config
+	isInitialized bool
+}
+
+func New${serviceName}(cfg ${serviceName}Config) *${serviceName} {
+	return &${serviceName}{
+		config:        cfg,
+		isInitialized: false,
+	}
+}
+
+func (s *${serviceName}) Initialize() error {
+	s.isInitialized = true
+	fmt.Printf("[${serviceName}] Initialized for milestone: %s\\n", s.config.MilestoneID)
+	return nil
+}
+
+func (s *${serviceName}) ExecutePipeline(payload map[string]interface{}) (map[string]interface{}, error) {
+	if !s.isInitialized {
+		return nil, fmt.Errorf("service not initialized")
+	}
+	
+	// =========================================================
+	// WRITE YOUR CODE HERE...
+	// Implement your core milestone deliverable logic below:
+	// =========================================================
+
+	return map[string]interface{}{
+		"success":     true,
+		"milestoneId": s.config.MilestoneID,
+		"processedAt": time.Now().Unix(),
+		"inputPayload": payload,
+	}, nil
+}
+
+func main() {
+	cfg := ${serviceName}Config{
+		MilestoneID:     "${currentStep.id}",
+		EnableTelemetry: true,
+		TimeoutMS:       5000,
+	}
+	svc := New${serviceName}(cfg)
+	_ = svc.Initialize()
+}
+`;
+
+      case "Markdown / Architecture RFC":
+        return `# Architecture RFC: ${currentStep.title}
+**Deliverable Spec**: ${currentStep.deliverable}
+**Target Skills**: ${skillsList}
+
+## 1. Executive Summary
+Provide a high-level technical summary of the proposed solution and core architectural goals.
+
+## 2. Component Architecture & System Boundaries
+\`\`\`
+[ Client / API Gateway ]
+          │
+          ▼
+[ ${currentStep.skillsAcquired[0] || "Core"} Service ] ──▶ [ Database / Distributed Cache ]
+\`\`\`
+
+<!-- ========================================================= -->
+<!-- WRITE YOUR ARCHITECTURE SPECIFICATION & RFC HERE...       -->
+<!-- ========================================================= -->
+
+## 3. Key Design Decisions & Technical Trade-offs
+- **Throughput & Scalability**: Asynchronous non-blocking architecture.
+- **Reliability & Resilience**: Fallback circuit breakers and retry exponential backoff.
+- **Security & Compliance**: Zero-trust boundary schema validation.
+
+## 4. Implementation & Validation Plan
+1. Define schema & contract interfaces.
+2. Implement service business logic.
+3. Validate through automated integration testing and benchmark stress tests.
+`;
+
+      case "TypeScript":
+      default:
+        return `// Milestone Implementation: ${currentStep.deliverable}
+// Target Skills: ${skillsList}
 
 export interface MilestoneConfig {
   milestoneId: string;
@@ -129,7 +414,7 @@ export interface MilestoneConfig {
   timeoutMs: number;
 }
 
-export class ${step.skillsAcquired[0]?.replace(/[^a-zA-Z0-9]/g, "") || "Milestone"}Service {
+export class ${serviceName} {
   private isInitialized = false;
 
   constructor(private config: MilestoneConfig) {}
@@ -144,15 +429,41 @@ export class ${step.skillsAcquired[0]?.replace(/[^a-zA-Z0-9]/g, "") || "Mileston
       throw new Error("Service not initialized. Call initialize() first.");
     }
     
-    // TODO: Implement your core deliverable logic here
+    // =========================================================
+    // WRITE YOUR CODE HERE...
+    // Implement your core milestone deliverable logic below:
+    // =========================================================
+
     return {
       success: true,
-      result: { status: "ready", processedAt: Date.now() }
+      result: { status: "ready", processedAt: Date.now(), payload }
     };
   }
 }
 `;
-    setSubmissionCode(starter);
+    }
+  };
+
+  const handleLanguageChange = (newLang: string) => {
+    setProgrammingLanguage(newLang);
+    setSubmissionCode(generateStarterCode(newLang, step));
+  };
+
+  const handleResetCodeTemplate = () => {
+    setSubmissionCode(generateStarterCode(programmingLanguage, step));
+  };
+
+  // Sync state when step changes
+  useEffect(() => {
+    setNotes(step.userNotes || "");
+    setSelectedAnswers({});
+    setQuizSubmitted(false);
+    setCopiedIndex(null);
+    setReviewData(null);
+    setSubmissionNotes("");
+    
+    // Generate default boilerplate code for this step's deliverable based on selected language
+    setSubmissionCode(generateStarterCode(programmingLanguage, step));
 
     // Stop ongoing speech when switching milestones
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -887,11 +1198,11 @@ export async function execute${skill.replace(/[^a-zA-Z0-9]/g, "")}Service(payloa
 
                   <div className="flex items-center gap-3">
                     {/* Language selector */}
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
+                    <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
                       <span>Language:</span>
                       <select
                         value={programmingLanguage}
-                        onChange={(e) => setProgrammingLanguage(e.target.value)}
+                        onChange={(e) => handleLanguageChange(e.target.value)}
                         className="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                       >
                         <option value="TypeScript">TypeScript</option>
@@ -902,6 +1213,14 @@ export async function execute${skill.replace(/[^a-zA-Z0-9]/g, "")}Service(payloa
                         <option value="Go">Go</option>
                         <option value="Markdown / Architecture RFC">Architecture RFC</option>
                       </select>
+                      <button
+                        type="button"
+                        onClick={handleResetCodeTemplate}
+                        title="Reset code template for selected language"
+                        className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 </div>

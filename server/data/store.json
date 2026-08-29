@@ -15,5 +15,35 @@
   },
   "sessions": {
     "622f6281236aa7e0429e55935365e610e445844c6625c5a3dd22e4b9e04e3e93": "riyanshiverma46@gmail.com"
-  }
+  },
+  "feedback": [
+    {
+      "id": "fb-1",
+      "name": "Riyanshi Verma",
+      "roleTitle": "AI & Full-Stack Engineer • Verified Learner",
+      "rating": 4.8,
+      "comment": "AuraLearn completely changed how I organize my technical learning. Instead of getting stuck in tutorial hell, the prerequisite graph pinpointed my exact skill gaps and generated a structured, hands-on roadmap that actually matched my weekly schedule. Truly exceptional!",
+      "createdAt": "2026-08-26T07:36:12.794Z",
+      "status": "approved",
+      "isFeatured": true
+    },
+    {
+      "id": "fb-2",
+      "name": "David Kim",
+      "roleTitle": "Staff Cloud Architect • Verified Learner",
+      "rating": 5,
+      "comment": "The explainability feature is what sets AuraLearn apart. Knowing WHY each course was selected based on my diagnostics made me trust the path 100%. Transitioned to Staff Platform role in 4 months.",
+      "createdAt": "2026-08-22T07:36:12.797Z",
+      "status": "approved"
+    },
+    {
+      "id": "fb-3",
+      "name": "Elena Martinez",
+      "roleTitle": "MLOps Specialist • Verified Learner",
+      "rating": 5,
+      "comment": "The AI code reviewer on milestone submissions feels like having a senior staff engineer reviewing your pull requests in real time. Absolute game changer for portfolio building.",
+      "createdAt": "2026-08-17T07:36:12.797Z",
+      "status": "approved"
+    }
+  ]
 }
