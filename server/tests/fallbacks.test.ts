@@ -25,6 +25,8 @@ describe("Air-Gapped Resilient Fallback Engine Tests", () => {
     expect(roadmap).toBeDefined();
     expect(roadmap.id).toBeDefined();
     expect(roadmap.title).toContain("AI Engineer");
+    expect(roadmap.isFallback).toBe(true);
+    expect(roadmap.fallbackReason).toBeDefined();
     expect(roadmap.steps.length).toBeGreaterThan(0);
     expect(roadmap.skillGaps.length).toBeGreaterThan(0);
     expect(roadmap.phases.length).toBeGreaterThan(0);
