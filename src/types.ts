@@ -109,6 +109,8 @@ export interface LearningRoadmap {
   steps: RoadmapStep[];
   createdAt: string;
   lastAdaptedAt?: string;
+  isFallback?: boolean;
+  fallbackReason?: string;
 }
 
 export interface ChatMessage {

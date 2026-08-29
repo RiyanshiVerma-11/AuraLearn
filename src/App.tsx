@@ -274,9 +274,27 @@ Where would you like to start?`,
     try {
       const data = await apiService.generateRoadmap(userProfile);
       if (data.roadmap) {
-        setRoadmap(data.roadmap);
+        const isFallbackMode = Boolean(data.isFallback || data.roadmap.isFallback);
+        const finalRoadmap = {
+          ...data.roadmap,
+          isFallback: isFallbackMode,
+          fallbackReason: data.errorMessage || data.roadmap.fallbackReason,
+        };
+        setRoadmap(finalRoadmap);
+
+        if (isFallbackMode) {
+          setChatHistory((prev) => [
+            ...prev,
+            {
+              id: `msg-${Date.now()}`,
+              sender: "assistant",
+              text: `⚠️ **Offline Fallback Roadmap Loaded**: The live AI generation engine was unreachable or API keys were not detected.\n\nA starter preview roadmap has been loaded. To generate a 100% custom learning path for **${userProfile.targetRole || "your target role"}**, please ensure server AI API keys (Gemini / Groq) are configured or try again once your connection is restored.`,
+              timestamp: new Date().toISOString(),
+            },
+          ]);
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("[App] Failed to generate roadmap:", err);
     } finally {
       setIsLoadingRoadmap(false);

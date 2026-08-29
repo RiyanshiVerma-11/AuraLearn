@@ -100,11 +100,14 @@ Return strictly JSON matching this structure.`;
     }
 
     // 3. Resilient Local Dynamic Engine Fallback
+    const fallbackRoadmap = generateFallbackRoadmap(profile);
+    fallbackRoadmap.isFallback = true;
+    fallbackRoadmap.fallbackReason = geminiErr.message;
     return res.json({
       success: true,
       isFallback: true,
       provider: "local-resilient-fallback",
-      roadmap: generateFallbackRoadmap(profile),
+      roadmap: fallbackRoadmap,
       errorMessage: geminiErr.message,
     });
   }

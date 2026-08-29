@@ -15,6 +15,8 @@ export function generateFallbackRoadmap(profile: BackendUserProfile = {}) {
     difficulty: profile.experienceLevel || "Intermediate",
     aiPersonalizationNotes: `Roadmap calibrated for ${weeklyHours}h/week with preference for ${profile.learningStyle || "hands-on projects"}. Prioritized skill bridge in foundational architecture, real-time agentic reasoning, and production deployments.`,
     createdAt: new Date().toISOString(),
+    isFallback: true,
+    fallbackReason: "Live AI Model Service is disconnected or API key is missing. Showing offline starter preview roadmap.",
     skillGaps: [
       {
         skill: "Generative AI & LLM Systems",

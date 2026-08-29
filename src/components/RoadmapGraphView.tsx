@@ -13,6 +13,7 @@ import {
   Zap,
   Layers,
   ArrowRight,
+  AlertTriangle,
 } from "lucide-react";
 import { LearningRoadmap, RoadmapStep } from "../types";
 import { calculateRoadmapStats } from "../utils/helpers";
@@ -68,6 +69,26 @@ export const RoadmapGraphView: React.FC<RoadmapGraphViewProps> = ({
 
   return (
     <div className="w-full space-y-6 sm:space-y-8">
+      {/* Offline Dynamic Fallback Notice Banner */}
+      {roadmap.isFallback && (
+        <div className="bg-amber-50 border border-amber-300 rounded-2xl p-4 sm:p-5 shadow-xs flex items-start gap-3.5 text-amber-900">
+          <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-200 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+            <AlertTriangle className="w-5 h-5" />
+          </div>
+          <div className="space-y-1 text-xs sm:text-sm">
+            <div className="flex items-center gap-2 font-bold text-amber-900 flex-wrap">
+              <span>Offline / API Fallback Mode Active</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-200 text-amber-900 font-bold border border-amber-300">
+                Live AI Engine Unreachable
+              </span>
+            </div>
+            <p className="text-amber-800 leading-relaxed">
+              The live AI generation service is currently disconnected or model limits were exceeded. A standard starter preview roadmap is displayed below. To generate a 100% custom AI roadmap tailored to <strong>"{roadmap.targetRole}"</strong>, please ensure Gemini / Groq API keys are active or try again when reconnected.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Personalized AI Roadmap Status Banner */}
       <div className="bg-linear-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-blue-800/60 relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1 relative z-10">
