@@ -37,43 +37,48 @@
 
 Standard online learning recommendation platforms recommend isolated videos or generic playlists without understanding **prerequisites**, **skill gap vectors**, or **learner weekly availability**. 
 
-**AuraLearn** is an enterprise-grade AI learning architect platform. It acts as an autonomous Principal AI Learning Architect—analyzing a learner's background, target role, baseline vs target skills, weekly commitment hours, and preferred learning modalities to build **explainable, milestone-driven Directed Acyclic Graph (DAG) learning roadmaps**.
+**AuraLearn** is an enterprise-grade AI learning architect platform. It acts as an autonomous Principal AI Learning Architect—ingesting a learner's background via **GitHub public repository analysis**, **AI resume/bio extraction**, or **standardized 1–5 rubrics**, analyzing target roles, baseline vs target skills, weekly commitment hours, and preferred learning modalities to build **explainable, milestone-driven Directed Acyclic Graph (DAG) learning roadmaps**.
 
 ---
 
 ## ✨ Key Features
 
-### 🗺️ 1. Prerequisite-Aware DAG Roadmap Generator
+### 🔍 1. Automated Diagnostic Skill Ingestion & Profiling
+- **GitHub Repository Analysis**: Connects with the GitHub API to parse up to 20 public repositories, analyzes language byte distributions, and algorithmically estimates skill levels based on production code footprint.
+- **AI Resume & Bio Extraction (`POST /api/extract-skills`)**: LLM-powered extraction from resume snippets, LinkedIn bios, or self-descriptions with automated proficiency rating.
+- **Standardized 1–5 Skill Rubrics**: Concrete competency descriptors from Novice (Level 1) to Expert (Level 5) with interactive tooltips and pre-merge review.
+
+### 🗺️ 2. Prerequisite-Aware DAG Roadmap Generator
 - Generates 3–5 logical sequential phases (Foundational Bridge $\rightarrow$ Core Systems $\rightarrow$ Applied Capstones $\rightarrow$ Mastery).
 - Explicit prerequisite binding between milestone steps to eliminate sequencing confusion.
 - Assigns actionable hands-on deliverables, skills acquired, and estimated hours per step.
 
-### 🧠 2. Transparent AI Explainability Engine
+### 🧠 3. Transparent AI Explainability Engine
 - Every milestone step and recommended resource includes explicit AI rationale (`reasoning` & `aiWhyRecommended`).
 - Explains *why* a topic was included by referencing the user's specific skill gap delta vector (e.g., *"Recommended because your baseline in Vector DBs is at 20% while your target role demands 85%"*).
 
-### 📊 3. Executive Telemetry & Radar Analytics
+### 📊 4. Executive Telemetry & Radar Analytics
 - **Skill Gap Radar (`SkillGapVisualizer`)**: Quantitative 0–100 comparison between current capabilities vs target role requirements.
 - **Learning Velocity & Role Readiness (`LearningVelocityChart`)**: Dynamic completion forecast burn-up curves reacting in real-time to weekly hour adjustments.
 - **Curriculum Modality Matrix (`CurriculumModalityMatrix`)**: Visual allocation across hands-on labs, video courses, RFCs/theory, and case studies.
 
-### 💬 4. Conversational AI Learning Advisor (Aura)
+### 💬 5. Conversational AI Learning Advisor (Aura)
 - Contextual side-panel AI mentor for real-time path calibration powered by full GFM markdown rendering (`react-markdown` + `remark-gfm`).
 - Rich, beautifully formatted responses with category badges, structured bullet lists, code syntax blocks, and styled external link cards.
 - Full context injection: Aura retains your exact profile, active roadmap, skill gap vector, and chat history across turns.
 - Interactive quick-action buttons allowing learners to instantly adapt timelines, view free resources, or trigger capstone project builds.
 
-### 📱 5. Progressive Web App (PWA) Support
-- Fully installable PWA with custom service worker, offline web manifest, and iOS/Android home screen support.
-- Offline caching fallback ensures user profile, active roadmaps, and learning progress remain available without internet connectivity.
-
 ### 📝 6. Milestone Assessments & Code Review Evaluator
 - Embedded 3-question diagnostic check quizzes with immediate explanation feedback per step.
 - **AI Code Review Evaluator (`reviewRoutes.ts`)**: Automated rubric grading for code submissions (Functionality, Architecture, Cleanliness, Security).
 
-### 📅 7. Multi-Format Export & Sync
-- One-click `.ics` Calendar Export for Google Calendar, Apple Calendar, and Outlook.
-- Instant export to raw Markdown, structured JSON, or printable document formats.
+### 📱 7. Progressive Web App (PWA) Support
+- Fully installable PWA with custom service worker, offline web manifest, and iOS/Android home screen support.
+- Offline caching fallback ensures user profile, active roadmaps, and learning progress remain available without internet connectivity.
+
+### 📅 8. Calendar Export & Executive Certificate
+- One-click `.ics` Calendar Export for Google Calendar, Apple Calendar, and Outlook with customized milestone scheduling.
+- **Executive Completion Certificate**: Generates verifiable, personalized certificates with learner name, career path target, credential tier, and completion date.
 
 ---
 
@@ -216,6 +221,7 @@ All API routes are hosted under the `/api` namespace:
 | `POST` | `/api/auth/verify-otp` | Verify OTP code and activate account. |
 | `POST` | `/api/auth/login` | Authenticate user via password or magic link. |
 | `GET`  | `/api/auth/me` | Retrieve authenticated user session details. |
+| `POST` | `/api/extract-skills` | Extracts structured technical skills and 1–5 proficiency levels from resume or bio text via Gemini. |
 | `POST` | `/api/generate-roadmap` | Accepts user profile JSON and generates a full DAG roadmap with skill gaps and quizzes. |
 | `POST` | `/api/adapt-roadmap` | Re-optimizes an existing roadmap based on natural language feedback. |
 | `POST` | `/api/chat-advisor` | Contextual conversational agent returning messages & profile updates. |
@@ -241,7 +247,7 @@ AuraLearn is built for zero downtime:
 │   ├── AGENTS.md        # System persona & engineering conventions
 │   └── GEMINI.md        # Gemini configuration & context
 ├── server/
-│   ├── routes/          # Express API route handlers (auth, roadmap, chat, deepdive, review)
+│   ├── routes/          # Express API route handlers (auth, roadmap, chat, deepdive, review, skills)
 │   ├── fallbacks/       # Deterministic offline fallback generators
 │   ├── data/            # Persistent JSON file storage (store.json)
 │   ├── app.ts           # Express application initialization with CORS
