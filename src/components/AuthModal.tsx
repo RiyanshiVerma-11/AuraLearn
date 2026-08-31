@@ -383,8 +383,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const getSubheaderText = () => {
-    if (flowStep === "otp") return `We sent a 6-digit code to ${email}`;
-    if (flowStep === "reset-otp") return `Password reset code sent to ${email}`;
+    if (flowStep === "otp") return `We sent a 6-digit code to ${email} (Please check your Inbox & Spam folder)`;
+    if (flowStep === "reset-otp") return `Password reset code sent to ${email} (Please check your Inbox & Spam folder)`;
     if (flowStep === "reset-email") return "Enter your email to receive a reset code";
     if (flowStep === "reset-pass") return "Choose a strong new password";
     return mode === "signin"
@@ -736,6 +736,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <p className="text-xs text-slate-500">
                 Enter the 6-digit code sent to <span className="font-semibold text-slate-700">{email}</span>
               </p>
+              <div className="mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-center gap-1.5 font-medium">
+                <Mail className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                <span>💡 Please check your <strong>Spam / Junk folder</strong> if you don't see the email in your inbox!</span>
+              </div>
             </div>
 
             {renderOtpBoxes()}
