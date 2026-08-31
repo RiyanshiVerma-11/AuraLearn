@@ -6,6 +6,7 @@ import { healthRouter } from "./routes/healthRoutes";
 import { reviewRouter } from "./routes/reviewRoutes";
 import { authRouter } from "./routes/authRoutes";
 import { feedbackRouter } from "./routes/feedbackRoutes";
+import { skillRouter } from "./routes/skillRoutes";
 
 /**
  * Creates and configures the Express application with all API routers.
@@ -35,6 +36,7 @@ export function createExpressApp(): Express {
   app.use("/api", reviewRouter);
   app.use("/api", authRouter);
   app.use("/api", feedbackRouter);
+  app.use("/api", skillRouter);
 
   return app;
 }

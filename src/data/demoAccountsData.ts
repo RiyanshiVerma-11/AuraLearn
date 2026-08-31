@@ -499,12 +499,15 @@ export const MARCUS_VANCE_DEMO: DemoUserData = {
   ],
 };
 
-export function getDemoAccountData(name: string): DemoUserData {
+export function getDemoAccountData(name: string): DemoUserData | null {
   if (name.includes("Sarah")) {
     return SARAH_JENKINS_DEMO;
   }
   if (name.includes("Marcus")) {
     return MARCUS_VANCE_DEMO;
   }
-  return ALEX_CHEN_DEMO;
+  if (name.includes("Alex")) {
+    return ALEX_CHEN_DEMO;
+  }
+  return null;
 }

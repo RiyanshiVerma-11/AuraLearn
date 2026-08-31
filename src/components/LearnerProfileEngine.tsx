@@ -14,7 +14,86 @@ import {
   Flame,
   Lightbulb,
   Compass,
+  Github,
+  FileText,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
+  Loader2,
+  Info,
 } from "lucide-react";
+
+// ─── Skill Level Rubrics ────────────────────────────────────────────────────
+const SKILL_LEVEL_RUBRICS: Record<number, { label: string; descriptor: string; color: string }> = {
+  1: { label: "Novice",       descriptor: "Heard of it / watched intro videos",                    color: "bg-slate-100 text-slate-600 border-slate-300" },
+  2: { label: "Beginner",    descriptor: "Completed tutorials, built toy examples",               color: "bg-sky-50 text-sky-700 border-sky-200" },
+  3: { label: "Intermediate",descriptor: "Built & shipped personal or hobby projects",            color: "bg-blue-50 text-blue-700 border-blue-200" },
+  4: { label: "Proficient",  descriptor: "Used in production at work or client projects",         color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+  5: { label: "Expert",      descriptor: "Deep expertise — can architect, mentor, or teach others", color: "bg-violet-50 text-violet-700 border-violet-200" },
+};
+
+// ─── Level Button with Rubric Tooltip ───────────────────────────────────────
+const LevelButton: React.FC<{
+  level: number;
+  selected: boolean;
+  onClick: () => void;
+}> = ({ level, selected, onClick }) => {
+  const [showTip, setShowTip] = useState(false);
+  const rubric = SKILL_LEVEL_RUBRICS[level];
+  return (
+    <div className="relative" onMouseEnter={() => setShowTip(true)} onMouseLeave={() => setShowTip(false)}>
+      <button
+        type="button"
+        onClick={onClick}
+        className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${
+          selected ? "bg-blue-600 text-white shadow-sm" : "bg-white text-slate-600 border border-slate-200 hover:border-blue-400"
+        }`}
+      >
+        {level}
+      </button>
+      {showTip && (
+        <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-52 rounded-lg border p-2.5 shadow-lg text-[11px] leading-snug pointer-events-none ${rubric.color}`}>
+          <div className="font-bold text-[12px] mb-0.5">{level} — {rubric.label}</div>
+          <div>{rubric.descriptor}</div>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-current" style={{ borderTopColor: 'inherit' }} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Extracted Skill Preview Row ─────────────────────────────────────────────
+interface PreviewSkill { skill: string; level: number; reasoning?: string; selected: boolean; }
+
+const PreviewSkillRow: React.FC<{
+  item: PreviewSkill;
+  onChange: (updated: PreviewSkill) => void;
+}> = ({ item, onChange }) => (
+  <div className={`flex items-center gap-2 p-2 rounded-lg border text-xs transition-all ${
+    item.selected ? "bg-blue-50 border-blue-200" : "bg-slate-50 border-slate-200 opacity-60"
+  }`}>
+    <input
+      type="checkbox"
+      checked={item.selected}
+      onChange={(e) => onChange({ ...item, selected: e.target.checked })}
+      className="w-3.5 h-3.5 accent-blue-600 cursor-pointer flex-shrink-0"
+    />
+    <span className="flex-1 font-semibold text-slate-800 truncate">{item.skill}</span>
+    {item.reasoning && (
+      <span className="text-slate-500 hidden sm:block truncate max-w-[180px]">{item.reasoning}</span>
+    )}
+    <div className="flex items-center gap-0.5">
+      {[1,2,3,4,5].map((l) => (
+        <LevelButton
+          key={l}
+          level={l}
+          selected={item.level === l}
+          onClick={() => onChange({ ...item, level: l, selected: true })}
+        />
+      ))}
+    </div>
+  </div>
+);
 import {
   UserProfile,
   ExperienceLevel,
@@ -46,6 +125,20 @@ export const LearnerProfileEngine: React.FC<LearnerProfileEngineProps> = ({
   const [customDomain, setCustomDomain] = useState("");
   const [savedSuccess, setSavedSuccess] = useState(false);
 
+  // ── GitHub Import State ──
+  const [showGithubPanel, setShowGithubPanel] = useState(false);
+  const [githubUsername, setGithubUsername] = useState("");
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [githubError, setGithubError] = useState<string | null>(null);
+  const [githubPreview, setGithubPreview] = useState<PreviewSkill[]>([]);
+
+  // ── Resume / AI Extract State ──
+  const [showResumePanel, setShowResumePanel] = useState(false);
+  const [resumeText, setResumeText] = useState("");
+  const [resumeLoading, setResumeLoading] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [resumePreview, setResumePreview] = useState<PreviewSkill[]>([]);
+
   React.useEffect(() => {
     setFormData(profile);
   }, [profile]);
@@ -66,6 +159,137 @@ export const LearnerProfileEngine: React.FC<LearnerProfileEngineProps> = ({
     setNewSkillName("");
     setNewSkillLevel(3);
   };
+
+  // ── Merge preview skills into profile (no duplicates) ──
+  const mergePreviewSkills = (preview: PreviewSkill[]) => {
+    const toAdd = preview.filter((p) => p.selected);
+    if (toAdd.length === 0) return;
+    const existing = new Set(formData.knownSkills.map((s) => s.skill.toLowerCase()));
+    const merged = [
+      ...formData.knownSkills,
+      ...toAdd
+        .filter((p) => !existing.has(p.skill.toLowerCase()))
+        .map((p) => ({ skill: p.skill, level: p.level })),
+    ];
+    handleFieldChange("knownSkills", merged);
+  };
+
+  // ── GitHub Import Handler ──
+  const handleGithubImport = async () => {
+    if (!githubUsername.trim()) return;
+    setGithubLoading(true);
+    setGithubError(null);
+    setGithubPreview([]);
+
+    try {
+      // Fetch up to 100 public repos, sorted by most recently pushed
+      const reposRes = await fetch(
+        `https://api.github.com/users/${encodeURIComponent(githubUsername.trim())}/repos?per_page=100&sort=pushed`,
+        { headers: { Accept: "application/vnd.github+json" } }
+      );
+
+      if (reposRes.status === 404) {
+        setGithubError(`GitHub user "${githubUsername.trim()}" not found. Please check the username and try again.`);
+        return;
+      }
+      if (reposRes.status === 403 || reposRes.status === 429) {
+        setGithubError("GitHub API rate limit reached. Please try again in ~1 hour.");
+        return;
+      }
+      if (!reposRes.ok) {
+        setGithubError(`GitHub API error (${reposRes.status}). Please try again later.`);
+        return;
+      }
+
+      const repos: any[] = await reposRes.json();
+      const top20 = repos.slice(0, 20); // cap to avoid rate limits
+
+      // Fetch language bytes for each repo in parallel
+      const languageMaps = await Promise.all(
+        top20.map(async (repo) => {
+          try {
+            const langRes = await fetch(repo.languages_url, {
+              headers: { Accept: "application/vnd.github+json" },
+            });
+            if (!langRes.ok) return {};
+            return await langRes.json() as Record<string, number>;
+          } catch {
+            return {};
+          }
+        })
+      );
+
+      // Aggregate: count repos each language appears in
+      const repoCounts: Record<string, number> = {};
+      for (const langMap of languageMaps) {
+        for (const lang of Object.keys(langMap)) {
+          repoCounts[lang] = (repoCounts[lang] || 0) + 1;
+        }
+      }
+
+      if (Object.keys(repoCounts).length === 0) {
+        setGithubError("No public repositories with detectable languages found for this user.");
+        return;
+      }
+
+      // Map repo count → skill level
+      const toPreview: PreviewSkill[] = Object.entries(repoCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([lang, count]) => ({
+          skill: lang,
+          level: count >= 7 ? 5 : count >= 4 ? 4 : count >= 2 ? 3 : 2,
+          reasoning: `Found in ${count} public repo${count !== 1 ? "s" : ""}`,
+          selected: true,
+        }));
+
+      setGithubPreview(toPreview);
+    } catch {
+      setGithubError("Could not reach GitHub. Check your internet connection and try again.");
+    } finally {
+      setGithubLoading(false);
+    }
+  };
+
+  // ── Resume / AI Extraction Handler ──
+  const handleResumeExtract = async () => {
+    if (resumeText.trim().length < 20) return;
+    setResumeLoading(true);
+    setResumeError(null);
+    setResumePreview([]);
+
+    try {
+      const res = await fetch("/api/extract-skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: resumeText }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setResumeError(data.error || "AI extraction failed. Please try again.");
+        return;
+      }
+
+      const preview: PreviewSkill[] = (data.skills || []).map((s: any) => ({
+        skill: s.skill,
+        level: s.level,
+        reasoning: s.reasoning,
+        selected: true,
+      }));
+
+      if (preview.length === 0) {
+        setResumeError("No technical skills detected. Try adding more detail about your tech stack.");
+        return;
+      }
+
+      setResumePreview(preview);
+    } catch {
+      setResumeError("Connection error. Please check your internet and try again.");
+    } finally {
+      setResumeLoading(false);
+    }
+  };
+
 
   const handleRemoveSkill = (index: number) => {
     const updated = formData.knownSkills.filter((_, i) => i !== index);
@@ -336,9 +560,23 @@ export const LearnerProfileEngine: React.FC<LearnerProfileEngineProps> = ({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold text-slate-700">
-                Your Current Skills & Self-Assessed Proficiency (1 to 5)
+                Your Current Skills & Self-Assessed Proficiency
               </label>
               <span className="text-[11px] text-slate-500 font-medium">Used for Gap Analysis</span>
+            </div>
+
+            {/* Rubric Legend */}
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {[1,2,3,4,5].map((l) => (
+                <div key={l} className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold ${SKILL_LEVEL_RUBRICS[l].color}`}>
+                  <span className="font-black">{l}</span>
+                  <span>{SKILL_LEVEL_RUBRICS[l].label}</span>
+                </div>
+              ))}
+              <div className="flex items-center gap-1 text-[10px] text-slate-400 ml-1">
+                <Info className="w-3 h-3" />
+                <span>Hover a level button for full description</span>
+              </div>
             </div>
 
             <div className="space-y-2 mb-3">
@@ -352,18 +590,12 @@ export const LearnerProfileEngine: React.FC<LearnerProfileEngineProps> = ({
                   </span>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <button
+                      <LevelButton
                         key={star}
-                        type="button"
+                        level={star}
+                        selected={star <= sk.level}
                         onClick={() => handleSkillLevelChange(idx, star)}
-                        className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors cursor-pointer ${
-                          star <= sk.level
-                            ? "bg-blue-600 text-white"
-                            : "bg-slate-100 text-slate-400 hover:bg-slate-200 border border-slate-200"
-                        }`}
-                      >
-                        {star}
-                      </button>
+                      />
                     ))}
                   </div>
                   <button
@@ -377,29 +609,25 @@ export const LearnerProfileEngine: React.FC<LearnerProfileEngineProps> = ({
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            {/* Manual Add Row */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4">
               <input
                 type="text"
                 value={newSkillName}
                 onChange={(e) => setNewSkillName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddSkill(); } }}
                 placeholder="New skill (e.g. SQL, PyTorch, Docker)"
                 className="flex-1 px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 shadow-2xs"
               />
-              <div className="flex items-center gap-1.5 justify-end">
+              <div className="flex items-center gap-1 justify-end">
                 <span className="text-xs text-slate-500 font-medium mr-1">Level:</span>
                 {[1, 2, 3, 4, 5].map((lvl) => (
-                  <button
+                  <LevelButton
                     key={lvl}
-                    type="button"
+                    level={lvl}
+                    selected={newSkillLevel === lvl}
                     onClick={() => setNewSkillLevel(lvl)}
-                    className={`w-6 h-6 rounded text-xs font-bold cursor-pointer ${
-                      newSkillLevel === lvl
-                        ? "bg-blue-600 text-white"
-                        : "bg-white text-slate-600 border border-slate-200"
-                    }`}
-                  >
-                    {lvl}
-                  </button>
+                  />
                 ))}
                 <button
                   type="button"
@@ -411,6 +639,173 @@ export const LearnerProfileEngine: React.FC<LearnerProfileEngineProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* ── Quick Import Buttons ─────────────────────────────────── */}
+            <div className="flex flex-col sm:flex-row gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => { setShowGithubPanel(!showGithubPanel); setShowResumePanel(false); }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all cursor-pointer bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-2xs"
+              >
+                <Github className="w-3.5 h-3.5" />
+                Import from GitHub
+                {showGithubPanel ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowResumePanel(!showResumePanel); setShowGithubPanel(false); }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all cursor-pointer bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-2xs"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                Extract from Resume / Bio
+                {showResumePanel ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+              </button>
+            </div>
+
+            {/* ── GitHub Import Panel ──────────────────────────────────── */}
+            {showGithubPanel && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3 mb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                  <Github className="w-4 h-4" />
+                  Import Public GitHub Languages
+                </div>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Enter your GitHub username. We'll fetch your top 20 public repos and map
+                  languages to skill levels — <strong>no login or token required</strong>.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={githubUsername}
+                    onChange={(e) => { setGithubUsername(e.target.value); setGithubError(null); }}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleGithubImport(); } }}
+                    placeholder="e.g. torvalds"
+                    className="flex-1 px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
+                  />
+                  <button
+                    type="button"
+                    disabled={githubLoading || !githubUsername.trim()}
+                    onClick={handleGithubImport}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                  >
+                    {githubLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Github className="w-3.5 h-3.5" />}
+                    {githubLoading ? "Fetching..." : "Fetch Skills"}
+                  </button>
+                </div>
+
+                {githubError && (
+                  <div className="flex items-start gap-2 rounded-lg bg-rose-50 border border-rose-200 p-2.5 text-[11px] text-rose-700">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    {githubError}
+                  </div>
+                )}
+
+                {githubPreview.length > 0 && (
+                  <div className="space-y-1.5">
+                    <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">Review & select skills to import — adjust levels before adding:</div>
+                    <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+                      {githubPreview.map((item, i) => (
+                        <PreviewSkillRow
+                          key={i}
+                          item={item}
+                          onChange={(updated) => {
+                            const copy = [...githubPreview];
+                            copy[i] = updated;
+                            setGithubPreview(copy);
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        mergePreviewSkills(githubPreview);
+                        setGithubPreview([]);
+                        setShowGithubPanel(false);
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      Add {githubPreview.filter(p => p.selected).length} Selected Skills
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Resume / AI Extraction Panel ─────────────────────────── */}
+            {showResumePanel && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3 mb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                  <FileText className="w-4 h-4" />
+                  Extract Skills from Resume or Bio
+                </div>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Paste a snippet from your resume, LinkedIn "About" section, or any professional bio.
+                  Our AI will extract your technical skills and estimate proficiency levels.
+                  <strong> You can review and edit everything before adding.</strong>
+                </p>
+                <textarea
+                  rows={5}
+                  value={resumeText}
+                  onChange={(e) => { setResumeText(e.target.value); setResumeError(null); }}
+                  placeholder="e.g. 'I'm a full-stack engineer with 4 years of experience building React and Node.js applications. I've deployed microservices on AWS (ECS, Lambda) and have strong skills in PostgreSQL and Redis...' "
+                  className="w-full p-2.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 resize-none"
+                  maxLength={5000}
+                />
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400">{resumeText.length}/5000 characters</span>
+                  <button
+                    type="button"
+                    disabled={resumeLoading || resumeText.trim().length < 20}
+                    onClick={handleResumeExtract}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                  >
+                    {resumeLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                    {resumeLoading ? "Analyzing..." : "Extract Skills with AI"}
+                  </button>
+                </div>
+
+                {resumeError && (
+                  <div className="flex items-start gap-2 rounded-lg bg-rose-50 border border-rose-200 p-2.5 text-[11px] text-rose-700">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    {resumeError}
+                  </div>
+                )}
+
+                {resumePreview.length > 0 && (
+                  <div className="space-y-1.5">
+                    <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">Review & edit — AI-extracted skills:</div>
+                    <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+                      {resumePreview.map((item, i) => (
+                        <PreviewSkillRow
+                          key={i}
+                          item={item}
+                          onChange={(updated) => {
+                            const copy = [...resumePreview];
+                            copy[i] = updated;
+                            setResumePreview(copy);
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        mergePreviewSkills(resumePreview);
+                        setResumePreview([]);
+                        setShowResumePanel(false);
+                        setResumeText("");
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-xs"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      Add {resumePreview.filter(p => p.selected).length} Selected Skills
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

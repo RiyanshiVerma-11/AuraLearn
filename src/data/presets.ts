@@ -1,27 +1,22 @@
 import { CareerPathPreset, UserProfile } from "../types";
 
 export const DEFAULT_USER_PROFILE: UserProfile = {
-  name: "Alex Morgan",
-  currentRole: "Associate Professional",
+  name: "Learner",
+  currentRole: "Full-Stack Developer",
   targetRole: "Full-Stack Generative AI Engineer",
   experienceLevel: "Intermediate",
   domainsOfInterests: ["Generative AI", "LLM Systems", "Data Science", "Modern Applications"],
   knownSkills: [
-    { skill: "JavaScript / TypeScript", level: 4 },
-    { skill: "React & Modern UI", level: 4 },
-    { skill: "Python Basics", level: 3 },
-    { skill: "Data Analysis & SQL", level: 3 },
-    { skill: "System Fundamentals", level: 2 },
+    { skill: "JavaScript / TypeScript", level: 3 },
+    { skill: "React & Modern UI", level: 3 },
+    { skill: "Python Basics", level: 2 },
   ],
   weeklyCommitmentHours: 10,
   learningStyle: "hands-on-projects",
   learningPace: "steady",
   preferredBudget: "free-only",
-  completedCourses: [
-    "Introduction to Programming & Data Analysis",
-    "Digital Product & Technology Fundamentals",
-  ],
-  learningGoalsText: "I want to master AI systems, vector knowledge pipelines, and hands-on applied projects to accelerate my career growth.",
+  completedCourses: [],
+  learningGoalsText: "Master LLM orchestration, RAG retrieval, and real-time agentic tool execution.",
 };
 
 export const CAREER_PATH_PRESETS: CareerPathPreset[] = [
@@ -247,7 +242,7 @@ export const POPULAR_DOMAINS = [
 export const DEFAULT_INITIAL_ROADMAP = {
   id: "roadmap-default-init",
   title: "Generative AI & LLM Systems Accelerator Roadmap",
-  summary: "A high-impact, milestone-driven pathway tailored for Alex transitioning into Generative AI & Systems Engineer with an emphasis on practical systems, hands-on portfolio deliverables, and modern tooling.",
+  summary: "A high-impact, milestone-driven pathway tailored for your baseline transitioning into Generative AI & Systems Engineer with an emphasis on practical systems, hands-on portfolio deliverables, and modern tooling.",
   targetRole: "Generative AI & Systems Engineer",
   totalEstimatedWeeks: 8,
   totalEstimatedHours: 84,

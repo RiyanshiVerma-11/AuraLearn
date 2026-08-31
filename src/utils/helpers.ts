@@ -63,71 +63,82 @@ export function calculateOnboardingStatus(
   const isProfileDone =
     manualOverrides["profile_setup"] !== undefined
       ? manualOverrides["profile_setup"]
-      : Boolean(hasCustomizedProfile && profile.targetRole && profile.weeklyCommitmentHours > 0);
+      : Boolean(hasCustomizedProfile && roadmap !== null);
+
+  const isRadarDone =
+    manualOverrides["radar_check"] !== undefined
+      ? manualOverrides["radar_check"]
+      : Boolean(hasVisitedRadar && roadmap !== null && roadmap.skillGaps && roadmap.skillGaps.length > 0);
+
+  const isDeliverableDone =
+    manualOverrides["active_deliverable"] !== undefined
+      ? manualOverrides["active_deliverable"]
+      : stats.completedSteps > 0;
+
+  const isDiagnosticDone =
+    manualOverrides["diagnostic_test"] !== undefined
+      ? manualOverrides["diagnostic_test"]
+      : stats.passedQuizzes > 0;
+
+  const isChatDone =
+    manualOverrides["ai_calibration"] !== undefined
+      ? manualOverrides["ai_calibration"]
+      : hasChatted;
 
   const items: OnboardingActionItem[] = [
     {
       id: "profile_setup",
       stepNumber: "01",
-      title: hasCustomizedProfile
-        ? "Target Role & Weekly Capacity Configured"
-        : "Personalize Target Role & Skill Baseline",
-      description: hasCustomizedProfile
-        ? `Targeting: ${profile.targetRole || "Senior Engineer"} • Committed: ${profile.weeklyCommitmentHours} hrs/week`
-        : `⚠️ Default profile loaded (${profile.targetRole || "AI Engineer"}). Edit your background and skill ratings to customize.`,
+      title: isProfileDone
+        ? "Target Role & Skill Baseline Configured"
+        : "Configure Target Role & Skill Baseline",
+      description: isProfileDone
+        ? `Targeting: ${profile.targetRole || "Engineer"} • Committed: ${profile.weeklyCommitmentHours} hrs/week`
+        : `Targeting: ${profile.targetRole || "Engineer"}. Personalize your known skills & weekly hours in the Profile Engine.`,
       isCompleted: isProfileDone,
-      actionLabel: hasCustomizedProfile ? "Edit Profile" : "Personalize Now",
+      actionLabel: isProfileDone ? "Edit Profile" : "Configure Profile",
       targetTab: "profile",
-      highlight: !hasCustomizedProfile,
+      highlight: !isProfileDone,
     },
     {
       id: "radar_check",
       stepNumber: "02",
       title: "Inspect Your Skill Gap Radar & Critical Deltas",
       description: "Review mathematical competency gaps calculated across your target domains.",
-      isCompleted:
-        manualOverrides["radar_check"] !== undefined
-          ? manualOverrides["radar_check"]
-          : Boolean(hasVisitedRadar || (roadmap && roadmap.skillGaps && roadmap.skillGaps.length > 0)),
+      isCompleted: isRadarDone,
       actionLabel: "View Radar",
       targetTab: "dashboard",
+      highlight: isProfileDone && !isRadarDone,
     },
     {
       id: "active_deliverable",
       stepNumber: "03",
       title: `Build Deliverable: ${currentActiveStep?.title || "Foundational Milestone"}`,
       description: currentActiveStep?.deliverable || "Implement hands-on code project and review curated labs.",
-      isCompleted:
-        manualOverrides["active_deliverable"] !== undefined
-          ? manualOverrides["active_deliverable"]
-          : stats.completedSteps > 0,
+      isCompleted: isDeliverableDone,
       actionLabel: "Start Milestone",
       targetTab: "roadmap",
-      highlight: true,
+      highlight: isProfileDone && isRadarDone && !isDeliverableDone && Boolean(roadmap),
     },
     {
       id: "diagnostic_test",
       stepNumber: "04",
       title: "Pass Milestone Diagnostic Assessment",
       description: "Complete the 3-question conceptual quiz to verify mastery and unlock Stage 2.",
-      isCompleted:
-        manualOverrides["diagnostic_test"] !== undefined
-          ? manualOverrides["diagnostic_test"]
-          : stats.passedQuizzes > 0,
+      isCompleted: isDiagnosticDone,
       actionLabel: "Take Assessment",
       targetTab: "roadmap",
+      highlight: isDeliverableDone && !isDiagnosticDone,
     },
     {
       id: "ai_calibration",
       stepNumber: "05",
       title: "Calibrate Path or Chat with Aura (AI Advisor)",
       description: "Adapt roadmap pacing, ask architecture questions, or simulate interview rounds.",
-      isCompleted:
-        manualOverrides["ai_calibration"] !== undefined
-          ? manualOverrides["ai_calibration"]
-          : hasChatted,
+      isCompleted: isChatDone,
       actionLabel: "Ask Aura",
       targetTab: "chat",
+      highlight: isDiagnosticDone && !isChatDone,
     },
   ];
 

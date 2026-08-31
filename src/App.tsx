@@ -60,7 +60,7 @@ export default function App() {
 
   const [roadmap, setRoadmap] = useState<LearningRoadmap | null>(() => {
     const saved = localStorage.getItem("auralearn_roadmap") || localStorage.getItem("pathforge_roadmap");
-    return saved ? JSON.parse(saved) : DEFAULT_INITIAL_ROADMAP;
+    return saved ? JSON.parse(saved) : null;
   });
 
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>(() => {
@@ -173,16 +173,6 @@ Where would you like to start?`,
     localStorage.setItem("auralearn_chat", JSON.stringify(chatHistory));
   }, [chatHistory]);
 
-  // Initial load: auto-generate roadmap only if a user is authenticated
-  // and no roadmap exists yet — prevents firing for fresh registrations or
-  // unauthenticated visitors who haven't set up a profile yet.
-  useEffect(() => {
-    const savedUser = localStorage.getItem("auralearn_auth_user");
-    if (!roadmap && savedUser) {
-      handleGenerateRoadmap(profile);
-    }
-  }, []);
-
   // Handle Login / Registration Success
   const handleLoginSuccess = (user: AuthUser, isNewRegistration: boolean = false) => {
     setAuthUser(user);
@@ -211,7 +201,6 @@ Where would you like to start?`,
         name: user.name,
         targetRole: user.roleTitle || DEFAULT_USER_PROFILE.targetRole,
         weeklyCommitmentHours: user.weeklyHours || 10,
-        // Clear old skills so new user isn't shown Alex Morgan's skills
         knownSkills: [],
         completedCourses: [],
         learningGoalsText: "",
@@ -221,6 +210,9 @@ Where would you like to start?`,
       setHasCustomizedProfile(false);
       setHasVisitedRadar(false);
       setManualActionOverrides({});
+
+      // Direct brand new user straight to the Learner Profile Diagnostic Engine
+      setActiveTab("profile");
 
       // Reset chat with a personalized welcome for the real user
       setChatHistory([
@@ -236,21 +228,65 @@ Where would you like to start?`,
         },
       ]);
 
-      setHasCustomizedProfile(true);
-      localStorage.setItem("auralearn_has_customized_profile", "true");
+      localStorage.setItem("auralearn_profile", JSON.stringify(freshProfile));
+      localStorage.removeItem("auralearn_has_customized_profile");
       setIsNewUserWelcomeOpen(false);
     } else {
-      // ── Demo / Returning Sign-In: load persona pre-filled profile, roadmap & chat ─────────
+      // ── Demo / Returning Sign-In ───────────────────────────────────────
       const demoData = getDemoAccountData(user.name);
-      setProfile(demoData.profile);
-      setRoadmap(demoData.roadmap);
-      setChatHistory(demoData.chatHistory);
-      setHasCustomizedProfile(true);
+      if (demoData) {
+        setProfile(demoData.profile);
+        setRoadmap(demoData.roadmap);
+        setChatHistory(demoData.chatHistory);
+        setHasCustomizedProfile(true);
 
-      localStorage.setItem("auralearn_profile", JSON.stringify(demoData.profile));
-      localStorage.setItem("auralearn_roadmap", JSON.stringify(demoData.roadmap));
-      localStorage.setItem("auralearn_chat", JSON.stringify(demoData.chatHistory));
-      localStorage.setItem("auralearn_has_customized_profile", "true");
+        localStorage.setItem("auralearn_profile", JSON.stringify(demoData.profile));
+        localStorage.setItem("auralearn_roadmap", JSON.stringify(demoData.roadmap));
+        localStorage.setItem("auralearn_chat", JSON.stringify(demoData.chatHistory));
+        localStorage.setItem("auralearn_has_customized_profile", "true");
+      } else {
+        // Real user signing in (e.g. Riyanshi Verma)
+        const savedProfileRaw = localStorage.getItem("auralearn_profile");
+        const savedProfile = savedProfileRaw ? JSON.parse(savedProfileRaw) : null;
+
+        if (savedProfile && savedProfile.name === user.name) {
+          setProfile(savedProfile);
+        } else {
+          // Fresh profile populated with the user's authentic account details
+          const freshProfile: UserProfile = {
+            ...DEFAULT_USER_PROFILE,
+            name: user.name,
+            targetRole: user.roleTitle || DEFAULT_USER_PROFILE.targetRole,
+            weeklyCommitmentHours: user.weeklyHours || 10,
+            knownSkills: [],
+            completedCourses: [],
+            learningGoalsText: "",
+          };
+          setProfile(freshProfile);
+          setRoadmap(null);
+          setHasCustomizedProfile(false);
+          setHasVisitedRadar(false);
+          setManualActionOverrides({});
+
+          // Personalized welcome chat
+          setChatHistory([
+            {
+              id: "msg-welcome",
+              sender: "assistant",
+              text: `### 👋 Welcome back, ${user.name}!\n\nI'm **Aura**, your AI Learning Architect. I'll build you a personalized roadmap toward **${user.roleTitle || "your target role"}**.\n\nCustomize your profile or click below to generate your custom learning path.`,
+              timestamp: new Date().toISOString(),
+              suggestedActions: [
+                { label: "🎯 Customize My Profile", action: "tab_profile" },
+                { label: "⚡ Generate AI Roadmap", action: "tab_roadmap" },
+              ],
+            },
+          ]);
+
+          localStorage.setItem("auralearn_profile", JSON.stringify(freshProfile));
+          localStorage.removeItem("auralearn_roadmap");
+          localStorage.removeItem("auralearn_has_customized_profile");
+        }
+      }
       setIsNewUserWelcomeOpen(false);
     }
   };
@@ -633,8 +669,8 @@ Where would you like to start?`,
           {/* Standard Dashboard & Profile Views */}
           {activeTab !== "landing" && activeTab !== "chat" && !selectedStep && (
             <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-              {/* Reminder banner if default profile is currently loaded */}
-              {!hasCustomizedProfile && showProfileBanner && (
+              {/* Reminder banner if default profile is currently loaded (hidden on profile tab) */}
+              {activeTab !== "profile" && !hasCustomizedProfile && showProfileBanner && (
                 <ProfileCompletionBanner
                   profile={profile}
                   onOpenProfileTab={() => {
@@ -646,19 +682,21 @@ Where would you like to start?`,
                 />
               )}
 
-              {/* "What You Should Do Next" Guided Action Hub */}
-              <NextStepsGuide
-                roadmap={roadmap}
-                profile={profile}
-                authUser={authUser}
-                onboardingStatus={onboardingStatus}
-                onToggleAction={handleToggleOnboardingAction}
-                onNavigateToTab={(tab) => {
-                  setSelectedStep(null);
-                  setActiveTab(tab);
-                }}
-                onOpenCalibrate={() => setIsAdaptModalOpen(true)}
-              />
+              {/* "What You Should Do Next" Guided Action Hub (activates once roadmap exists) */}
+              {activeTab !== "profile" && roadmap !== null && (
+                <NextStepsGuide
+                  roadmap={roadmap}
+                  profile={profile}
+                  authUser={authUser}
+                  onboardingStatus={onboardingStatus}
+                  onToggleAction={handleToggleOnboardingAction}
+                  onNavigateToTab={(tab) => {
+                    setSelectedStep(null);
+                    setActiveTab(tab);
+                  }}
+                  onOpenCalibrate={() => setIsAdaptModalOpen(true)}
+                />
+              )}
 
               {/* Specific View Containers */}
               {activeTab === "roadmap" && (
@@ -668,6 +706,7 @@ Where would you like to start?`,
                   onSelectStep={(step) => setSelectedStep(step)}
                   onToggleComplete={handleToggleStepComplete}
                   onOpenAdaptModal={() => setIsAdaptModalOpen(true)}
+                  onNavigateToProfile={() => setActiveTab("profile")}
                 />
               )}
 
@@ -679,6 +718,7 @@ Where would you like to start?`,
                   onSelectStep={(step) => setSelectedStep(step)}
                   onToggleComplete={handleToggleStepComplete}
                   onNavigateToRoadmap={() => setActiveTab("roadmap")}
+                  onNavigateToProfile={() => setActiveTab("profile")}
                   onNavigateToChat={() => setActiveTab("chat")}
                   onOpenCertificate={() => setIsCertModalOpen(true)}
                 />

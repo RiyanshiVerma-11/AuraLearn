@@ -24,6 +24,7 @@ interface RoadmapGraphViewProps {
   onSelectStep: (step: RoadmapStep) => void;
   onToggleComplete: (stepId: string) => void;
   onOpenAdaptModal: () => void;
+  onNavigateToProfile?: () => void;
 }
 
 export const RoadmapGraphView: React.FC<RoadmapGraphViewProps> = ({
@@ -32,20 +33,35 @@ export const RoadmapGraphView: React.FC<RoadmapGraphViewProps> = ({
   onSelectStep,
   onToggleComplete,
   onOpenAdaptModal,
+  onNavigateToProfile,
 }) => {
   const [filterPhase, setFilterPhase] = useState<number | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   if (!roadmap) {
     return (
-      <div className="max-w-4xl mx-auto py-16 px-4 text-center">
-        <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100">
-          <Sparkles className="w-8 h-8" />
+      <div className="max-w-3xl mx-auto py-12 px-4 text-center">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-4">
+          <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto border border-blue-100 shadow-xs">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+            Hello, {profile?.name || "Learner"}! 👋
+          </h2>
+          <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+            Welcome to AuraLearn. To construct your prerequisite-aware roadmap and dependency graph, please configure your profile background and skill ratings first.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={onNavigateToProfile}
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Go to Learner Profile Engine</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-        <h2 className="text-xl font-bold text-slate-900">No Learning Path Initialized</h2>
-        <p className="text-sm text-slate-500 max-w-md mx-auto mt-2">
-          Configure your learner profile or select a career archetype to synthesize your personalized roadmap.
-        </p>
       </div>
     );
   }

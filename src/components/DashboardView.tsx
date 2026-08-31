@@ -29,6 +29,7 @@ interface DashboardViewProps {
   onSelectStep: (step: RoadmapStep) => void;
   onToggleComplete: (stepId: string) => void;
   onNavigateToRoadmap: () => void;
+  onNavigateToProfile?: () => void;
   onNavigateToChat: () => void;
   onOpenCertificate?: () => void;
 }
@@ -40,10 +41,125 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onSelectStep,
   onToggleComplete,
   onNavigateToRoadmap,
+  onNavigateToProfile,
   onNavigateToChat,
   onOpenCertificate,
 }) => {
-  const activeRoadmap = roadmap || DEFAULT_INITIAL_ROADMAP;
+  const userName = profile.name || authUser?.name || "Learner";
+  const userTargetRole = profile.targetRole || authUser?.roleTitle || "your target role";
+
+  if (!roadmap) {
+    return (
+      <div className="w-full space-y-8 max-w-5xl mx-auto py-2">
+        {/* Warm Welcome Hero Card */}
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-blue-800/60 relative overflow-hidden">
+          <div className="relative z-10 space-y-3 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-400/30">
+              <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+              <span>Welcome to AuraLearn</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+              Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-indigo-200">{userName}</span>! 👋
+            </h1>
+            <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
+              Welcome to your AI Learning Architect platform. Before we can display your executive radar, skill gap analytics, and learning velocity, we need to understand your background.
+            </p>
+            <div className="pt-2 flex items-center gap-3 flex-wrap">
+              <button
+                onClick={onNavigateToProfile || onNavigateToRoadmap}
+                className="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Create Your Profile & Generate Roadmap</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 3-Step Guided Onboarding Cards */}
+        <div className="space-y-4">
+          <div className="text-center sm:text-left">
+            <h2 className="text-lg font-bold text-slate-900">How AuraLearn Personalized Learning Works</h2>
+            <p className="text-xs text-slate-500">Follow these 3 simple steps to generate and master your tailored pathway:</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Step 1 */}
+            <div className="bg-white p-6 rounded-2xl border-2 border-blue-200 shadow-sm relative space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="w-8 h-8 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                    01
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider font-extrabold bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">
+                    Step 1: Start Here
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">Tell Us About Yourself</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Enter your current background, target role (<strong className="text-slate-800">{userTargetRole}</strong>), known skills (Level 1–5), and weekly study hours. You can even import via GitHub or Resume.
+                </p>
+              </div>
+              <button
+                onClick={onNavigateToProfile || onNavigateToRoadmap}
+                className="w-full mt-2 py-2 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-xl border border-blue-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>Set Up Profile</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative space-y-3 flex flex-col justify-between opacity-80 hover:opacity-100 transition-opacity">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 font-black text-xs flex items-center justify-center border border-slate-200">
+                    02
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                    Step 2: AI Synthesis
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">AI Generates Your Roadmap</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Gemini AI computes your competency gap vectors and architecturally sequences prerequisite-aware milestones, portfolio deliverables, and explainable AI rationales.
+                </p>
+              </div>
+              <div className="text-[11px] text-slate-400 font-medium italic flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Generates in ~5 seconds</span>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative space-y-3 flex flex-col justify-between opacity-80 hover:opacity-100 transition-opacity">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 font-black text-xs flex items-center justify-center border border-slate-200">
+                    03
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                    Step 3: Executive Radar
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">Unlock Live Analytics</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Your full dashboard will activate with your dynamic Learning Velocity chart, 360° Skill Gap Radar, interactive assessments, and Executive Completion Certificate.
+                </p>
+              </div>
+              <div className="text-[11px] text-slate-400 font-medium italic flex items-center gap-1">
+                <TrendingUp className="w-3.5 h-3.5" />
+                <span>Unlocks after generation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const activeRoadmap = roadmap;
 
   const stats = calculateRoadmapStats(activeRoadmap);
   const nextSteps = getNextRecommendedSteps(activeRoadmap, 3);

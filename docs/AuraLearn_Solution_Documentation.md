@@ -1,108 +1,171 @@
-# 📑 AuraLearn — Solution Architecture & AI Specification Document
+# 📑 AuraLearn — Comprehensive Solution Architecture & Technical Documentation
 
-> **Competition Deliverable 3**: Comprehensive Solution Documentation  
-> **System Name**: AuraLearn (AI-Powered Personalized Learning Path Recommender)  
+> **Project Name**: AuraLearn (AI-Powered Personalized Learning Path Recommender)  
+> **System Category**: AI/ML Personalized Education, Adaptive Curricula & Career Transition  
 > **Version**: 2.0.0 Production Release  
+> **Core AI Models**: Google Gemini 3.7 Flash & 2.5 Flash with Strict JSON Schema Enforcement  
 
 ---
 
 ## 📋 Executive Summary
 
-Online learning platforms host thousands of courses across diverse domains. However, learners face the **Sequencing & Personalization Paradox**: even when relevant courses are recommended, learners struggle to identify the correct prerequisite sequence, estimate required time commitments, and select appropriate learning modalities (hands-on code labs vs. theory vs. case studies) suited to their background.
+In today's digital landscape, online learning platforms host millions of courses and tutorials across hundreds of engineering and technology domains. However, self-directed learners face the **Sequencing & Personalization Paradox**:
+1. **Curriculum Fragmentation**: Disconnected tutorials with no clear prerequisite mapping or knowledge graph.
+2. **Skill Gap Ambiguity**: Inability to quantify the exact mathematical distance between a learner's baseline and industry role requirements.
+3. **Black-Box AI Recommendations**: Generic recommendations that fail to explain *why* a course was recommended and how it directly bridges a specific competency gap.
+4. **Static Timelines**: Inflexible schedules that fail to adapt when real-world availability fluctuates.
 
-**AuraLearn** bridges this gap by acting as an autonomous **Principal AI Learning Architect**. Powered by **Google Gemini 3.7 Flash** with structured JSON schemas, AuraLearn builds **explainable, prerequisite-aware Directed Acyclic Graph (DAG) roadmaps**, dynamically computes **Skill Gap Radar vectors**, projects **Learning Velocity burn-up curves**, and evaluates learner code submissions with an **AI Code Reviewer**.
+**AuraLearn** solves this challenge by serving as an autonomous **Principal AI Learning Architect**. Built on a high-performance modern web stack with server-side **Google Gemini AI**, AuraLearn ingests a learner's background (via manual input, GitHub repo analysis, or AI resume parsing), constructs **explainable, prerequisite-aware Directed Acyclic Graph (DAG) roadmaps**, dynamically computes **Skill Gap Radar vectors**, forecasts completion timelines via a live **Learning Velocity burn-up model**, evaluates code deliverables with an **AI Code Reviewer**, and supports real-time conversational roadmap adaptation.
 
 ---
 
 ## 🎯 1. Problem Understanding & Solution Approach
 
-### The Core Problem
-1. **Ineffective One-Size-Fits-All Curricula**: Generic pathways ignore a learner's current baseline vs. target skill requirements.
-2. **Prerequisite Ambiguity**: Learners waste time on advanced topics without mastering foundational prerequisites.
-3. **Lack of AI Explainability**: Recommendations feel like "black boxes" without justification for why a course or milestone was assigned.
-4. **Static Schedules**: Rigid timelines fail when learners have fluctuating weekly availability (e.g., 5h/week vs 25h/week).
+### The Core Challenges
+* **One-Size-Fits-All Inefficiency**: Static syllabi assume all students start from the same baseline and learn at uniform velocity.
+* **Prerequisite Traps**: Skipping foundational requirements leads to high dropout rates when learners hit advanced concepts.
+* **Lack of Diagnostic Depth**: Asking users "What do you know?" without granular rubrics results in noisy, inaccurate inputs.
+* **Non-Explainable AI**: Opaque recommendations erode learner trust and commitment.
 
-### The AuraLearn Solution Architecture
-AuraLearn delivers a personalized, adaptive learning ecosystem built around five core capabilities:
+### The AuraLearn Solution Pillars
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          AuraLearn Solution Matrix                          │
-├──────────────────────────┬──────────────────────────────────────────────────┤
-│ 1. Learner Profiling     │ Captures domain baseline, target role, weekly    │
-│    Engine                │ hours, completed courses, and learning styles.   │
-├──────────────────────────┼──────────────────────────────────────────────────┤
-│ 2. DAG Roadmap           │ Generates 3-5 sequential phases with strict step │
-│    Generator             │ prerequisites, deliverables, and duration metrics│
-├──────────────────────────┼──────────────────────────────────────────────────┤
-│ 3. Transparent AI        │ Provides explicit reasoning (aiWhyRecommended)   │
-│    Explainability        │ referencing the user's skill gap delta vector.   │
-├──────────────────────────┼──────────────────────────────────────────────────┤
-│ 4. Dynamic Analytics     │ Recharts-powered Skill Gap Radar, Velocity       │
-│    Dashboard             │ Projections, and Modality Allocation Matrix.     │
-├──────────────────────────┼──────────────────────────────────────────────────┤
-│ 5. Code Reviewer &       │ Rubric grading for student code deliverables     │
-│    Step Deep-Dive        │ and step-level interactive diagnostic quizzes.   │
-└──────────────────────────┴──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                         AuraLearn Core Solution Matrix                           │
+├──────────────────────────┬───────────────────────────────────────────────────────┤
+│ 1. Diagnostic Profiling  │ Multi-modal onboarding via manual 1–5 rubrics, GitHub │
+│    & Ingestion Engine    │ repo language parsing, and AI resume/bio extraction.  │
+├──────────────────────────┼───────────────────────────────────────────────────────┤
+│ 2. DAG Roadmap           │ Multi-phase prerequisite architecture sequencing      │
+│    Generator             │ milestones, estimated hours, and deliverables.       │
+├──────────────────────────┼───────────────────────────────────────────────────────┤
+│ 3. Transparent AI        │ Mathematical skill gap vectors (Current % vs Target %) │
+│    Explainability        │ with human-readable rationale callouts per step.      │
+├──────────────────────────┼───────────────────────────────────────────────────────┤
+│ 4. Executive Telemetry   │ Recharts-powered Skill Gap Radar, dynamic Learning    │
+│    & Analytics Dashboard │ Velocity Burn-up curve, and Modality Matrix.          │
+├──────────────────────────┼───────────────────────────────────────────────────────┤
+│ 5. Interactive Learning  │ Step syllabus, diagnostic assessments with instant    │
+│    & AI Code Reviewer    │ reasoning feedback, and 4-tier rubric code review.    │
+├──────────────────────────┼───────────────────────────────────────────────────────┤
+│ 6. Conversational AI     │ Natural language chat assistant (Aura) allowing       │
+│    Roadmap Adaptation    │ dynamic timeline and milestone recalibration on-demand│
+└──────────────────────────┴───────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🏛️ 2. Technical Architecture & Component Design
+## 🏛️ 2. Technical Architecture & System Design
 
-### System Overview
-AuraLearn follows a modular, decoupled full-stack architecture:
+### High-Level System Architecture
 
 ```
-[ React 18/19 Client ] <── REST / JSON ──> [ Express Node.js Server ]
-        │                                          │
-        ├── Recharts Visualizers                   ├── Gemini 3.7 AI Engine
-        ├── Tailwind CSS v4                        ├── Server-Side Schema Enforcer
-        └── State Persistence                      └── Offline Fallback Engine
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 AuraLearn Architecture                                 │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+
+ [ Client Layer: Modern React 19 SPA ]
+   │
+   ├── UI Components: Tailwind CSS v4, Motion Transitions, Lucide Icons
+   ├── Data Visualizations: Recharts (Radar, Area Burn-up, Modality Composed Charts)
+   ├── Interactive Engines: DAG Visualizer, Quiz Evaluator, Code Review Playground
+   └── Persistence Layer: Browser localStorage + State Synchronization
+   │
+   ▼ HTTP REST / JSON
+ [ Server Layer: Node.js Express API Server ]
+   │
+   ├── Middleware: CORS, JSON Parsing, Vite SPA Integration, Error Handlers
+   ├── Security & Auth: PBKDF2 Password Hashing, Session Store, SMTP OTP Delivery
+   ├── Strict Schema Enforcer: Server-side JSON schema validation (@google/genai)
+   │
+   ├──► [ Primary AI Engine: Google Gemini 3.7 / 2.5 Flash API ]
+   │      • Structured System Prompts & Rigid JSON Schemas
+   │      • Low-Latency Structured Reasoning & Explainability Generation
+   │
+   ├──► [ Secondary Failover: Groq Inference Engine ]
+   │      • High-speed backup for uninterrupted uptime
+   │
+   └──► [ Air-Gapped Resiliency: Local Deterministic Fallback Generator ]
+          • Zero-crash offline guarantee when external networks/keys are absent
 ```
-
-### Backend Components (`/server`)
-1. **`server.ts` & `server/app.ts`**: Express application entry point configured with CORS headers middleware, JSON body parsing, and Vite middleware integration.
-2. **`server/gemini.ts`**: Lazy-initialized `@google/genai` client executing Gemini operations within `executeWithGeminiFailover` wrappers.
-3. **`server/schemas.ts`**: Rigid JSON Schema definitions (`RoadmapResponseSchema`, `ChatAdvisorResponseSchema`, `DeepdiveResponseSchema`) guaranteeing strict output structures.
-4. **`server/routes/authRoutes.ts`**: User authentication supporting OTP email delivery, persistent JSON storage (`server/data/store.json`), and PBKDF2 password hashing.
-5. **`server/fallbacks/*`**: Air-gapped fallback generators executing deterministic mock routines if external AI quotas or network connections drop.
-
-### Frontend Components (`/src`)
-1. **`LearnerProfileEngine.tsx`**: Multi-step interactive engine for configuring baseline vs target skills and weekly commitments.
-2. **`RoadmapGraphView.tsx`**: Interactive DAG visualization rendering milestone nodes, phase groupings, and prerequisite connectors.
-3. **`DashboardView.tsx`**: Executive analytics hub orchestrating:
-   * `SkillGapVisualizer.tsx`: Radar chart comparing current proficiency vs target.
-   * `LearningVelocityChart.tsx`: Burn-up chart forecasting completion timeline based on weekly hours.
-   * `CurriculumModalityMatrix.tsx`: Pie and bar breakdown of hands-on, video, and theory content.
-4. **`ConversationalAdvisor.tsx`**: Real-time AI chat side-panel allowing natural language roadmap re-calibration.
-5. **`StepDetailModal.tsx` & `MilestoneLearningView.tsx`**: Step deep-dives, challenge specs, and code deliverable review interface.
 
 ---
 
-## 🧠 3. AI/ML Engineering & Schema Enforcement
+## 🔬 3. Detailed Component Breakdown
 
-### Gemini API Integration
-AuraLearn proxies all AI interaction server-side via `@google/genai`. Structured JSON outputs are strictly enforced using response schemas:
+### 1. Ingestion & Diagnostic Profiling (`LearnerProfileEngine.tsx`)
+* **Standardized 1–5 Skill Rubrics**: Replaces vague self-assessments with concrete competency levels (Level 1: Novice, Level 2: Beginner, Level 3: Intermediate, Level 4: Proficient, Level 5: Expert).
+* **GitHub Repository Scraping**: Direct integration with the GitHub Public API to analyze up to 20 user repositories, calculate language byte distributions, and automatically assign skill levels based on production repo counts.
+* **AI Resume / Bio Extraction (`POST /api/extract-skills`)**: Server-side Gemini model that processes raw resume text, CV markdown, or LinkedIn bios to extract technical skills and confidence scores.
+
+### 2. Explainable DAG Roadmap Generator (`RoadmapGraphView.tsx`)
+* **Milestone Dependency Graph**: Visual Directed Acyclic Graph (DAG) displaying phases, milestone nodes, locks, and prerequisite connectors.
+* **Explainable AI (XAI) Callouts**: Every milestone contains an `aiWhyRecommended` statement explicitly detailing the mathematical gap vector (e.g., *"Recommended because your baseline in Vector Databases is 25% while your target role requires 85%"*).
+* **Concrete Deliverables**: Hands-on project artifacts for portfolio building (e.g., CLI tools, microservice APIs, semantic search engines).
+
+### 3. Executive Telemetry & Analytics Dashboard (`DashboardView.tsx`)
+* **360° Skill Gap Radar (`SkillGapVisualizer.tsx`)**: Multi-axis radar comparing the user's current baseline against target industry standards across 4–6 competency vectors.
+* **Dynamic Learning Velocity Burn-Up Chart (`LearningVelocityChart.tsx`)**: Interactive hours-per-week slider (e.g., 5h → 15h → 25h/week) that dynamically calculates project burn-up trajectory and updates the projected target completion date in real time.
+* **Curriculum Modality Matrix (`CurriculumModalityMatrix.tsx`)**: Visual breakdown of pedagogical delivery (Hands-on Labs, Video Courses, RFC / Academic Reading, Diagnostic Checks).
+
+### 4. Interactive Learning & Milestone Assessment (`MilestoneLearningView.tsx`)
+* **Deep-Dive Syllabus**: In-depth conceptual breakdowns, key takeaways, and curated external resources (Coursera, DeepLearning.AI, GitHub repos).
+* **Milestone Diagnostic Quizzes**: 3-question conceptual quizzes with immediate AI explanation feedback upon answering, confetti celebratory animations on passing, and real-time milestone status progression.
+* **Live AI Deliverable & Code Reviewer**: Multi-language code submission playground (TypeScript, Python, Go, Rust, Java, C++) graded by Gemini on 4 criteria: Functionality (30%), Architecture (25%), Cleanliness (25%), and Security (20%).
+
+### 5. Conversational AI Advisor & Adaptive Recalibration (`ConversationalAdvisor.tsx`)
+* **Aura AI Advisor**: Context-aware assistant that maintains the user's active roadmap state.
+* **Dynamic Pathway Adaptation (`POST /api/adapt-roadmap`)**: Allows users to issue natural language instructions (e.g., *"I already know PyTorch well. Focus more on LLM evals and RLHF."*) and instantly re-indexes upcoming milestones while preserving completed milestones.
+
+### 6. Calendar Export & Executive Certificate (`ExportRoadmapModal.tsx` & `CertificateModal.tsx`)
+* **Calendar Sync**: Exports customized `.ics` calendar schedules compatible with Google Calendar, Apple Calendar, and Outlook based on the user's weekly study allocation.
+* **Executive Completion Certificate**: Generates a verifiable, personalized certificate with learner name, career path target, credential tier, and completion timestamp.
+
+---
+
+## 🧠 4. AI/ML Engineering & Schema Enforcement
+
+All generative AI workflows run server-side to secure API credentials and guarantee JSON schema integrity.
 
 ```typescript
-// Sample Schema Definition Excerpt (server/schemas.ts)
+// Strict Response Schema for Structured AI Roadmap Generation
 export const RoadmapResponseSchema = {
   type: Type.OBJECT,
   properties: {
     title: { type: Type.STRING },
+    targetRole: { type: Type.STRING },
     totalEstimatedWeeks: { type: Type.NUMBER },
+    totalEstimatedHours: { type: Type.NUMBER },
+    difficulty: { type: Type.STRING },
+    summary: { type: Type.STRING },
+    aiPersonalizationNotes: { type: Type.STRING },
     skillGaps: {
       type: Type.ARRAY,
       items: {
         type: Type.OBJECT,
         properties: {
           skill: { type: Type.STRING },
+          category: { type: Type.STRING },
           currentProficiency: { type: Type.NUMBER },
           targetProficiency: { type: Type.NUMBER },
           gapSeverity: { type: Type.STRING },
+          importance: { type: Type.STRING },
+          recommendedFocus: { type: Type.STRING },
         },
-        required: ["skill", "currentProficiency", "targetProficiency", "gapSeverity"],
+        required: ["skill", "category", "currentProficiency", "targetProficiency", "gapSeverity", "importance", "recommendedFocus"],
+      },
+    },
+    phases: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          phaseIndex: { type: Type.NUMBER },
+          title: { type: Type.STRING },
+          description: { type: Type.STRING },
+          estimatedHours: { type: Type.NUMBER },
+        },
+        required: ["phaseIndex", "title", "description", "estimatedHours"],
       },
     },
     steps: {
@@ -112,72 +175,103 @@ export const RoadmapResponseSchema = {
         properties: {
           id: { type: Type.STRING },
           title: { type: Type.STRING },
+          shortSummary: { type: Type.STRING },
+          detailedDescription: { type: Type.STRING },
+          phaseIndex: { type: Type.NUMBER },
+          phaseName: { type: Type.STRING },
+          estimatedHours: { type: Type.NUMBER },
+          order: { type: Type.NUMBER },
           prerequisites: { type: Type.ARRAY, items: { type: Type.STRING } },
+          skillsAcquired: { type: Type.ARRAY, items: { type: Type.STRING } },
+          deliverable: { type: Type.STRING },
           reasoning: { type: Type.STRING },
           aiWhyRecommended: { type: Type.STRING },
+          aiTips: { type: Type.ARRAY, items: { type: Type.STRING } },
+          resources: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                id: { type: Type.STRING },
+                title: { type: Type.STRING },
+                provider: { type: Type.STRING },
+                url: { type: Type.STRING },
+                type: { type: Type.STRING },
+                estimatedHours: { type: Type.NUMBER },
+                isFree: { type: Type.BOOLEAN },
+              },
+              required: ["id", "title", "provider", "url", "type", "estimatedHours", "isFree"],
+            },
+          },
         },
-        required: ["id", "title", "reasoning", "aiWhyRecommended"],
+        required: ["id", "title", "shortSummary", "detailedDescription", "phaseIndex", "phaseName", "estimatedHours", "order", "prerequisites", "skillsAcquired", "deliverable", "reasoning", "aiWhyRecommended", "resources"],
       },
     },
   },
-  required: ["title", "totalEstimatedWeeks", "skillGaps", "steps"],
+  required: ["title", "targetRole", "totalEstimatedWeeks", "totalEstimatedHours", "difficulty", "summary", "aiPersonalizationNotes", "skillGaps", "phases", "steps"],
 };
 ```
 
-### AI Code Review Rubric Evaluator
-When a learner submits code for a milestone deliverable, `/api/review-deliverable` evaluates the code across four key criteria:
-1. **Functionality (30%)**: Does the code satisfy the deliverable specification?
-2. **Architecture & Design Patterns (25%)**: Is the code modular, maintainable, and properly structured?
-3. **Cleanliness & Standards (25%)**: Does the code adhere to language conventions?
-4. **Security & Edge Cases (20%)**: Are input validations, edge cases, and error handlings present?
+---
+
+## 🛡️ 5. Resiliency, Security & Multi-Tier Failover
+
+AuraLearn is engineered for zero downtime and enterprise fault tolerance:
+1. **Primary Model**: Google Gemini 3.7 Flash / Gemini 2.5 Flash via `@google/genai`.
+2. **Secondary Failover**: Groq Llama 3.3 70B inference engine for API rate-limit resilience.
+3. **Deterministic Local Fallbacks**: Offline fallback generators in `server/fallbacks/*` guaranteeing zero-crash operation even in complete air-gapped environments.
+4. **Authentication & SMTP Delivery**: Cryptographic password hashing (PBKDF2 with salt) and real-world SMTP HTML verification emails with 6-digit auto-focusing OTP inputs.
 
 ---
 
-## 🛡️ 4. Air-Gapped Resiliency & Offline Fallback Engine
+## 📊 6. Hackathon & Submission Criteria Matrix
 
-To satisfy enterprise reliability standards, AuraLearn implements a **Dual-Engine Architecture**:
-
-```
-                  ┌──────────────────────────────┐
-                  │    API Request Triggered     │
-                  └──────────────┬───────────────┘
-                                 │
-                   Is GEMINI_API_KEY Available?
-                   ┌─────────────┴─────────────┐
-                   │ YES                       │ NO / Error
-                   ▼                           ▼
-        ┌─────────────────────┐     ┌─────────────────────┐
-        │  Gemini 3.7 Engine  │     │ Deterministic Local │
-        │  Schema Generation  │     │  Fallback Generator │
-        └─────────────────────┘     └─────────────────────┘
-```
-
-If the Gemini API key is unconfigured, rate-limited (HTTP 429), or offline, the failover engine catches the exception and returns structurally identical JSON from deterministic fallbacks (`server/fallbacks/*`), ensuring **zero crashes**.
-
----
-
-## 📊 5. Evaluation & Judging Criteria Alignment
-
-| Criteria | Weight | AuraLearn Implementation Summary |
+| Evaluation Criteria | Weight | How AuraLearn Exceeds Requirements |
 | :--- | :--- | :--- |
-| **Problem Understanding & Solution Design** | **20%** | Full DAG prerequisite sequencing, multi-dimensional profiling, and velocity calculation. |
-| **Functionality & Feature Completeness** | **25%** | All 6 engines fully operational: Profile, Generator, AI Explainability, Conversational Advisor, Dashboard, Code Reviewer. |
-| **AI/ML Implementation** | **20%** | Server-side Gemini 3.7 integration with rigid schema enforcement and fallback failovers. |
-| **Innovation & Creativity** | **15%** | AI Code Reviewer, dynamic velocity burn-up curves, and interactive milestone deep-dives. |
-| **User Experience & Interface** | **10%** | Modern glassmorphism UI, Recharts visualizers, custom onboarding checklist, and PWA manifest. |
-| **Performance & Code Quality** | **10%** | Clean TypeScript (`tsc --noEmit` 0 errors), CORS headers, persistent storage, and multi-stage Docker containerization. |
+| **Problem Understanding & Solution Design** | **20%** | Comprehensive Directed Acyclic Graph (DAG) learning paths, granular 1–5 rubrics, and dynamic hours velocity modeling. |
+| **Functionality & Feature Completeness** | **25%** | Complete end-to-end implementation: Profiling, DAG Roadmap, Explainable AI, Telemetry Dashboard, Live Code Reviewer, Conversational Advisor, and Calendar Sync. |
+| **AI/ML Technical Implementation** | **20%** | Server-side Gemini 3.7/2.5 integration with rigid TypeScript schemas, automated resume skill extraction, and multi-tier failover. |
+| **Innovation & User Experience** | **20%** | Modern glassmorphism UI, real-time Learning Velocity projections, instant quiz explanation feedback, and GitHub repository skill scraping. |
+| **Code Quality, Testing & DevOps** | **15%** | 100% clean TypeScript build (`tsc --noEmit` 0 errors), Vitest test suite, multi-stage Docker containerization, and automated GitHub Actions CI/CD pipeline. |
 
 ---
 
-## 🐳 6. Containerization, Testing & CI/CD Pipeline
+## 🚀 7. Quickstart & Deployment Guide
 
-AuraLearn incorporates an enterprise-grade automated testing & CI/CD pipeline:
-* **Vitest Unit Test Suite (`server/tests/fallbacks.test.ts`)**: Verifies air-gapped fallback generators, schema definitions, and API health endpoints.
-* **GitHub Actions Workflow (`.github/workflows/ci.yml`)**: Automatically triggers type-checking (`tsc`), Vitest unit tests (`vitest run`), and Docker container builds on every commit and pull request.
-* **Production Dockerization**: Multi-stage `Dockerfile` and `docker-compose.yml` with health checks (`/api/health`).
+### Local Development Setup
+```bash
+# 1. Clone the repository
+git clone https://github.com/RiyanshiVerma-11/AuraLearn.git
+cd AuraLearn
+
+# 2. Install dependencies
+npm install
+
+# 3. Configure environment variables (.env)
+GEMINI_API_KEY=your_gemini_api_key_here
+PORT=4000
+
+# 4. Start full-stack development server
+npm run dev
+# App will run at http://localhost:4000
+```
+
+### Automated Testing & Linting
+```bash
+# Run TypeScript compilation check
+npm run lint
+
+# Run Vitest unit test suite
+npm run test
+```
+
+### Docker Deployment
+```bash
+docker compose up --build
+```
 
 ---
 
-## 🔚 Conclusion
+## 🏁 Conclusion
 
-AuraLearn provides a complete, robust, enterprise-grade solution to the challenge of personalized learning path recommendation. Combining cutting-edge generative AI, strict schema enforcement, transparent explainability, and quantitative radar analytics, AuraLearn sets a new standard for AI-powered education.
+AuraLearn sets a new benchmark for **AI-powered education and career transitions**. By combining **Explainable AI (XAI)**, **prerequisite-aware graph architecture**, **automated skill ingestion**, and **data-driven velocity tracking**, AuraLearn empowers learners worldwide to reach their career goals with clarity, precision, and confidence.
